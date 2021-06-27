@@ -55,7 +55,7 @@ class CheckNotifications extends Thread
             $idList = implode("','", $idList);
             $result = $db->query("SELECT * FROM notifications WHERE player IN ('$players') AND id NOT IN ('$idList')");
             # Set every existing notifications display column to 0 since they have been displayed for sure.
-            $db->query("UPDATE notifications SET displayed = TRUE WHERE id IN ($idList) AND id NOT INT ('$idList')");
+            $db->query("UPDATE notifications SET displayed = TRUE WHERE id IN ($idList)");
         }
         if($result === false) return;
         $notifications = [];
