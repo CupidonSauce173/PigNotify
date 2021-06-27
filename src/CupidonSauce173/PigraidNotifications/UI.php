@@ -60,13 +60,10 @@ class UI
             if (is_null($data)) {
                 return;
             }
-            $count = count($notifList);
-            var_dump($count);
-            if ($data === $count) { # Retarded, I know.
+            if ($data === 0) { # Retarded, I know.
                 return;
             }
-            var_dump($notifList);
-            $this->SelectedNotification($player, $notifList[$count - 1]);
+            $this->SelectedNotification($player, $notifList[$data]);
         });
         $form->setTitle('Notifications');
         $form->setContent('Notification list.');

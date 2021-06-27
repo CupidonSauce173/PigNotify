@@ -15,6 +15,7 @@ use function implode;
 use function explode;
 use function strpos;
 use function str_replace;
+use function sort;
 
 class API
 {
@@ -31,7 +32,11 @@ class API
     {
         $id = (int)$notification->getId();
         if(($key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true))){
-            unset(NotifLoader::getInstance()->notificationList[$notification->getPlayer()][$key]);
+            $user = $notification->getPlayer();
+            var_dump($key);
+            unset(NotifLoader::getInstance()->notificationList[$user][$key]);
+            sort(NotifLoader::getInstance()->notificationList[$user]);
+            var_dump(NotifLoader::getInstance()->notificationList[$notification->getPlayer()]);
         }
         $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
         $thread->start();
@@ -43,9 +48,7 @@ class API
         /** @var Notification $notif */
         foreach ($notificationList as $notif) {
             $ids[] = $notif->getId();
-            if(($key = array_search($notif, NotifLoader::getInstance()->notificationList[$notif->getPlayer()], true))){
-                unset(NotifLoader::getInstance()->notificationList[$notif->getPlayer()][$key]);
-            }
+            NotifLoader::getInstance()->notificationList[$notif->getPlayer()] = [];
         }
         $ids = implode("','", $ids);
         $thread = new MySQLThread("DELETE FROM notifications WHERE id IN ('$ids')", NotifLoader::getInstance()->DBInfo);
