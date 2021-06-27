@@ -33,10 +33,8 @@ class API
         $id = (int)$notification->getId();
         if(($key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true))){
             $user = $notification->getPlayer();
-            var_dump($key);
             unset(NotifLoader::getInstance()->notificationList[$user][$key]);
             sort(NotifLoader::getInstance()->notificationList[$user]);
-            var_dump(NotifLoader::getInstance()->notificationList[$notification->getPlayer()]);
         }
         $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
         $thread->start();
