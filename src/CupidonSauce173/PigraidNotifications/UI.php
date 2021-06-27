@@ -60,7 +60,8 @@ class UI
             if (is_null($data)) {
                 return;
             }
-            if ($data === 0) { # Retarded, I know.
+            $count = count($notifList);
+            if ($data === $count) {
                 return;
             }
             $this->SelectedNotification($player, $notifList[$data]);
