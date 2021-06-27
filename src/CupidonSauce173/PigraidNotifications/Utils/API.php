@@ -19,7 +19,8 @@ use function sort;
 
 class API
 {
-    public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void{
+    public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
+    {
         $target = $player->getName();
         $thread = new MySQLThread(
             "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES ('$target','$langKey','$varKeys','$event')",

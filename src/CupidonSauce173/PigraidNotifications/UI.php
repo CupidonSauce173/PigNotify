@@ -13,7 +13,7 @@ use function count;
 class UI
 {
     private FormAPI $api;
-    
+
     public function __construct()
     {
         $this->api = NotifLoader::getInstance()->form;
@@ -26,9 +26,7 @@ class UI
     {
         $notifications = NotifLoader::getInstance()->getPlayerNotifications($player->getName());
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifications) {
-            if ($data === null) {
-                return;
-            }
+            if ($data === null) return;
             switch ($data) {
                 case 0:
                     $this->NotificationList($player, $notifications);
@@ -59,9 +57,7 @@ class UI
     public function NotificationList(Player $player, array $notifList): void
     {
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifList) {
-            if ($data === null) {
-                return;
-            }
+            if ($data === null) return;
             $count = count($notifList);
             if ($data === $count) {
                 return;

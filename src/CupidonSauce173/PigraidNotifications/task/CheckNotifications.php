@@ -31,23 +31,21 @@ class CheckNotifications extends Thread
 
     public function run()
     {
-        if(count($this->players) === 0){
-            return;
-        }
+        if (count($this->players) === 0) return;
         $DBInfo = $this->DBInfo;
         $db = new mysqli($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-        if($db->connect_error){
+        if ($db->connect_error) {
             new Exception("Couldn't connect to the MySQL database: $db->connect_error");
             return;
         }
         $players = implode("','", (array)$this->players);
-        if(count($this->notifications) === 0){
+        if (count($this->notifications) === 0) {
             $result = $db->query("SELECT * FROM notifications WHERE player IN ('$players')");
-        }else{
+        } else {
             $idList = [];
-            foreach($this->players as $player){
+            foreach ($this->players as $player) {
                 /** @var Notification $notification */
-                foreach ($this->notifications[$player] as $notification){
+                foreach ($this->notifications[$player] as $notification) {
                     $idList[] = $notification->getId();
                 }
             }
@@ -58,9 +56,9 @@ class CheckNotifications extends Thread
             # Set every existing notifications display column to 0 since they have been displayed for sure.
             $db->query("UPDATE notifications SET displayed = TRUE WHERE id IN ('$idList')");
         }
-        if($result === false) return;
+        if ($result === false) return;
         $notifications = [];
-        while($row = mysqli_fetch_assoc($result)){
+        while ($row = mysqli_fetch_assoc($result)) {
             $notif = [
                 'id' => (int)$row['id'],
                 'displayed' => (bool)$row['displayed'],

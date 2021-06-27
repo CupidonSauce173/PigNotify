@@ -23,7 +23,7 @@ class MySQLThread extends Thread
     {
         $DBInfo = $this->DBInfo;
         $db = new mysqli($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-        if($db->connect_error){
+        if ($db->connect_error) {
             new Exception("Couldn't connect to the MySQL database: $db->connect_error");
             return;
         }

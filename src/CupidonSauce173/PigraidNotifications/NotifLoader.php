@@ -46,10 +46,10 @@ class NotifLoader extends PluginBase implements Listener
     public function onEnable()
     {
         self::$instance = $this;
-        if(!file_exists($this->getDataFolder() . 'config.yml')){
+        if (!file_exists($this->getDataFolder() . 'config.yml')) {
             $this->saveResource('config.yml');
         }
-        if(!file_exists($this->getDataFolder() . 'langKeys.ini')){
+        if (!file_exists($this->getDataFolder() . 'langKeys.ini')) {
             $this->saveResource('langKeys.ini');
         }
         $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
@@ -66,16 +66,16 @@ class NotifLoader extends PluginBase implements Listener
         # Schedule Async data every check-time seconds.
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(
             function (): void {
-                if($this->thread->isRunning() === false){
+                if ($this->thread->isRunning() === false) {
                     $names = [];
-                    foreach($this->getServer()->getOnlinePlayers() as $player){
+                    foreach ($this->getServer()->getOnlinePlayers() as $player) {
                         $names[] = $player->getName();
                     }
                     $this->thread = new CheckNotifications($names, $this->DBInfo, $this->notificationList, $this->sharedStore);
                     $this->thread->start() && $this->thread->join();
-                    foreach ($names as $name){
-                        if(!isset($this->sharedStore['notifications'][$name])) return;
-                        foreach($this->sharedStore['notifications'][$name] as $data){
+                    foreach ($names as $name) {
+                        if (!isset($this->sharedStore['notifications'][$name])) return;
+                        foreach ($this->sharedStore['notifications'][$name] as $data) {
                             $notif = new Notification();
                             $notif->setId((int)$data['id']);
                             $notif->setPlayer($data['player']);
@@ -91,11 +91,11 @@ class NotifLoader extends PluginBase implements Listener
         ), $this->config['check-database-task'] * 20);
 
         # Task to check if the notifications has been displayed to the player.
-        $this->getScheduler()->scheduleRepeatingTask(new class extends Task{
+        $this->getScheduler()->scheduleRepeatingTask(new class extends Task {
             public function onRun(int $currentTick)
             {
-                foreach(NotifLoader::getInstance()->getServer()->getOnlinePlayers() as $player){
-                    if(!isset(NotifLoader::getInstance()->notificationList[$player->getName()])) return;
+                foreach (NotifLoader::getInstance()->getServer()->getOnlinePlayers() as $player) {
+                    if (!isset(NotifLoader::getInstance()->notificationList[$player->getName()])) return;
                     /** @var Notification $notification */
                     foreach (NotifLoader::getInstance()->notificationList[$player->getName()] as $notification) {
                         if ($notification->hasBeenDisplayed() !== true) {
@@ -165,7 +165,7 @@ class NotifLoader extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
         /** @var Notification $notification */
-        if(!isset($this->notificationList[$player->getName()])) return;
+        if (!isset($this->notificationList[$player->getName()])) return;
         $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
     }
 }
