@@ -1,0 +1,29 @@
+---
+# MySQL information.
+MySQL:
+  database: notifications
+  host: 127.0.0.1
+  username: MySQL_user
+  password: MySQL_Pasword
+  port: 3306
+
+# At how every x times the plugin will check for new notifications for the players (in seconds).
+check-database-task: 3
+# At how every x times the plugin will check if the notification has been displayed (if not, displays it to the player) (in seconds).
+check-displayed-task: 2
+# Prefix for the messages.
+prefix: "Notify > "
+
+# Set to false if you don't want to look if the user has the permission to use this command.
+use-permission: false
+# Permission to use this command.
+permission: "pig.notification.command"
+# Message if the player doesn't have the permission.
+no-permission-message: "You do not have the necessary permissions!"
+# Main command, /notification for example.
+command-main: "notification"
+# Aliases to use this command, /notif or /n for example.
+command-aliases:
+  - "notif"
+  - "n"
+...
