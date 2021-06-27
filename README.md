@@ -1,5 +1,7 @@
 # PigraidNotifications
 
+Join my discord: https://discord.gg/2QAPHbqrny
+
 This is a notification system designed for the now deleted Pigraid Network.
 
 <h3>Some Important Notes</h3>
