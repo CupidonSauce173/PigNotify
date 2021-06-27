@@ -15,11 +15,6 @@ class Notification
     private string $event;
     private int $id;
 
-    public function __construct()
-    {
-        var_dump("New notification object created!");
-    }
-
     public function getId(): int{
         return $this->id;
     }
