@@ -11,7 +11,7 @@ The README.md needs to be updated.
 
 <h3>Known Issues</h3>
 
-- The first notification of the objects array won't unset from the UI but will delete in the database.
+- none
 
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
