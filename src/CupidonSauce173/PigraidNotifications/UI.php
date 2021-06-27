@@ -57,7 +57,7 @@ class UI
     public function NotificationList(Player $player, array $notifList): void
     {
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifList) {
-            if (is_null($data)) {
+            if ($data === null) {
                 return;
             }
             $count = count($notifList);

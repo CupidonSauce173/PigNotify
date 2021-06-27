@@ -31,11 +31,10 @@ class API
     public function deleteNotification(Notification $notification): void
     {
         $id = (int)$notification->getId();
-        if(($key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true))){
-            $user = $notification->getPlayer();
-            unset(NotifLoader::getInstance()->notificationList[$user][$key]);
-            sort(NotifLoader::getInstance()->notificationList[$user]);
-        }
+        $key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true);
+        $user = $notification->getPlayer();
+        unset(NotifLoader::getInstance()->notificationList[$user][$key]);
+        sort(NotifLoader::getInstance()->notificationList[$user]);
         $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
         $thread->start();
     }
