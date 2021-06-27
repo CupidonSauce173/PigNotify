@@ -72,14 +72,6 @@ $notification->getVarKeys(); # Returns Array.
 # Get / Set Event.
 $notification->setEvent($event);
 $notification->getEvent($event); # Returns String.
-
-# Destruct Notification.
-
-#From Server + Database.
-$notification->destruct(true);
-
-#From Server Only.
-$notification->destruct();
 ```
 
 <h3>Config File</h3>
