@@ -11,8 +11,7 @@ The README.md needs to be updated.
 
 <h3>Known Issues</h3>
 
-- Notifications won't unset.
-- Notifications still show after closing them in the UI.
+- The first notification of the objects array won't unset from the UI but will delete in the database.
 
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
