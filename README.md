@@ -57,7 +57,7 @@ $notification->getId(); # Returns Int.
 
 # Get / Set Player.
 $notification->setPlayer($player);
-#notification->getPlayer(); # Returns pmmp/Player
+$notification->getPlayer(); # Returns pmmp/Player
 
 # Get / Set Displayed.
 $notification->setDisplayed(true|false);
