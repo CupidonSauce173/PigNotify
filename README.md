@@ -14,12 +14,12 @@ The README.md needs to be updated.
 
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
-| MultiThreaded System        | 🧰 |
-| Notification Object         | 🧰 |
-| Simple API                  | 🧰 |
-| Translation System          | 🧰 |
-| Command Customization       | 🧰 |
-| Automated MySQL Constructor | 🧰 |
+| MultiThreaded System        | ✔️ |
+| Notification Object         | ✔️ |
+| Simple API                  | ✔️ |
+| Translation System          | ✔️ |
+| Command Customization       | ✔️ |
+| Automated MySQL Constructor | ✔️ |
 
 <h3>Prerequisites</h3>
 
