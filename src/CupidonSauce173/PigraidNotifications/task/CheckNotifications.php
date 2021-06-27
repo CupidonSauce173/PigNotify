@@ -11,6 +11,7 @@ use Volatile;
 
 use function implode;
 use function count;
+use function mysqli_fetch_assoc;
 
 class CheckNotifications extends Thread
 {

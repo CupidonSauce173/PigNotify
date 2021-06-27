@@ -3,9 +3,6 @@
 
 namespace CupidonSauce173\PigraidNotifications\Object;
 
-
-use CupidonSauce173\PigraidNotifications\NotifLoader;
-
 class Notification
 {
     private string $player;

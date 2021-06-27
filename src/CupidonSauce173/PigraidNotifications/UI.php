@@ -8,6 +8,8 @@ use CupidonSauce173\PigraidNotifications\Object\Notification;
 use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 
+use function count;
+
 class UI
 {
     private FormAPI $api;
@@ -24,7 +26,7 @@ class UI
     {
         $notifications = NotifLoader::getInstance()->getPlayerNotifications($player->getName());
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifications) {
-            if (is_null($data)) {
+            if ($data === null) {
                 return;
             }
             switch ($data) {
