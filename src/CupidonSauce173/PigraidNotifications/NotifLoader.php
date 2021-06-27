@@ -150,8 +150,6 @@ class NotifLoader extends PluginBase implements Listener
         $player = $event->getPlayer();
         /** @var Notification $notification */
         if(!isset($this->notificationList[$player->getName()])) return;
-        foreach ($this->notificationList[$player->getName()] as $notification) {
-            $notification->destruct();
-        }
+        $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
     }
 }
