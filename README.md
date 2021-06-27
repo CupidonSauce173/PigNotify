@@ -7,6 +7,11 @@ This is a notification system designed for the now deleted Pigraid Network.
 This plugin is **not** stable yet. Please do not use in any production server until further notices.
 The README.md needs to be updated.
 
+<h3>Known Issues</h3>
+
+- Notifications won't unset.
+- Notifications still show after closing them in the UI.
+
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
 | MultiThreaded System        | 🧰 |
