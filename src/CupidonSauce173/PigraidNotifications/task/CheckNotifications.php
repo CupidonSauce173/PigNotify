@@ -45,7 +45,7 @@ class CheckNotifications extends Thread
         if (count($this->players) === 0) return;
         $DBInfo = $this->DBInfo;
         $db = new mysqli();
-        try{
+        try {
             $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
             $players = implode("','", (array)$this->players);
             if (count($this->notifications) === 0) {
@@ -80,8 +80,8 @@ class CheckNotifications extends Thread
             }
             $this->sharedStore['notifications'] = (array)$notifications;
             $db->close();
-        }catch (mysqli_sql_exception $e){
-           throw new Exception($e->getMessage());
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 }

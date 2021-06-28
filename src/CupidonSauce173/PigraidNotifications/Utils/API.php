@@ -29,10 +29,10 @@ class API
     {
         # Note, varKeys build = array ( 0 => "sender|server", 1 => "sender|friend1" )
         $target = $player->getName();
-        if($varKeys !== null){
+        if ($varKeys !== null) {
             $keys = implode(',', $varKeys);
             $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES ('$target','$langKey','$keys','$event')";
-        }else{
+        } else {
             $query = "INSERT INTO notifications (player,langKey,event) VALUES ('$target','$langKey','$event')";
         }
         $thread = new MySQLThread($query, NotifLoader::getInstance()->DBInfo);
@@ -104,7 +104,7 @@ class API
      */
     public function GetText(string $message, array $LangKey = null): ?string
     {
-        if(!isset(NotifLoader::getInstance()->langKeys[$message])) return null;
+        if (!isset(NotifLoader::getInstance()->langKeys[$message])) return null;
         $text = NotifLoader::getInstance()->langKeys[$message];
         if ($LangKey !== null) {
             $text = str_replace($LangKey[0], $LangKey[1], $text);

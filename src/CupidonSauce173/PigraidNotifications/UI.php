@@ -31,9 +31,9 @@ class UI
             if ($data === null) return;
             switch ($data) {
                 case 0:
-                    if($count !== 0){
+                    if ($count !== 0) {
                         $this->NotificationList($player, $notifications);
-                     break;
+                        break;
                     }
                     $player->sendMessage(NotifLoader::getInstance()->config['prefix'] . NotifLoader::getInstance()->GetText('message.no.notif'));
                     break;
@@ -47,7 +47,7 @@ class UI
         $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
         $form->setContent(NotifLoader::getInstance()->GetText('form.content.main'));
         if ($count !== 0) {
-            $form->addButton(str_replace('%count%' , $count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
+            $form->addButton(str_replace('%count%', $count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
         } else {
             $form->addButton(NotifLoader::getInstance()->GetText('form.notification.button'), 0, 'textures/ui/Caution');
         }

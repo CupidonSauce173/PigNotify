@@ -130,7 +130,7 @@ class NotifLoader extends PluginBase implements Listener
      */
     public function getPlayerNotifications(string $player): array
     {
-        if(!isset($this->notificationList[$player])) $this->notificationList[$player] = [];
+        if (!isset($this->notificationList[$player])) $this->notificationList[$player] = [];
         return $this->notificationList[$player];
     }
 

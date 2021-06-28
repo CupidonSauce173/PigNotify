@@ -33,11 +33,11 @@ class MySQLThread extends Thread
     {
         $DBInfo = $this->DBInfo;
         $db = new mysqli();
-        try{
+        try {
             $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
             $db->query($this->query);
             $db->close(); # Close the connection to MySQL.
-        }catch (mysqli_sql_exception $e){
+        } catch (mysqli_sql_exception $e) {
             throw new Exception($e->getMessage());
         }
     }
