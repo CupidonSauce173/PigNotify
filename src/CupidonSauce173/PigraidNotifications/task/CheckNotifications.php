@@ -41,10 +41,9 @@ class CheckNotifications extends Thread
     {
         if (count($this->players) === 0) return;
         $DBInfo = $this->DBInfo;
-        $db = new mysqli($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-        if ($db->connect_error) new Exception("Couldn't connect to the MySQL database: $db->connect_error");
-
+        $db = new mysqli();
         try{
+            $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
             $players = implode("','", (array)$this->players);
             if (count($this->notifications) === 0) {
                 $result = $db->query("SELECT * FROM notifications WHERE player IN ('$players')");
