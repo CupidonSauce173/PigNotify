@@ -4,11 +4,6 @@ Join my discord: https://discord.gg/2QAPHbqrny
 
 This is a notification system designed for the now deleted Pigraid Network.
 
-<h3>Some Important Notes</h3>
-
-This plugin is **not** stable yet. Please do not use in any production server until further notices.
-The README.md needs to be updated.
-
 <h3>Known Issues</h3>
 
 - none
