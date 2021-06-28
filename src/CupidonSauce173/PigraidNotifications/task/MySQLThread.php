@@ -13,6 +13,12 @@ class MySQLThread extends Thread
     private array $DBInfo;
 
     # You must prepare the whole query before sending it to the thread.
+
+    /**
+     * MySQLThread constructor.
+     * @param string $query
+     * @param array $DBInfo
+     */
     public function __construct(string $query, array $DBInfo)
     {
         $this->query = $query;

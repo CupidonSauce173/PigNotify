@@ -169,9 +169,9 @@ class NotifLoader extends PluginBase implements Listener
     /**
      * @param string $messageKey
      * @param array|null $LangKeys
-     * @return string
+     * @return string|null
      */
-    public function GetText(string $messageKey, array $LangKeys = null): string
+    public function GetText(string $messageKey, array $LangKeys = null): ?string
     {
         return $this->api->GetText($messageKey, $LangKeys);
     }

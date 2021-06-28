@@ -11,6 +11,9 @@ class DatabaseProvider
     private mysqli $db;
     private array $DBInfo;
 
+    /**
+     * DatabaseProvider constructor.
+     */
     public function __construct()
     {
         $this->DBInfo = NotifLoader::getInstance()->DBInfo;

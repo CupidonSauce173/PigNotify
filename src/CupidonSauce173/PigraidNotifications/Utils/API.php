@@ -51,7 +51,6 @@ class API
         sort(NotifLoader::getInstance()->notificationList[$user]);
         $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
         $thread->start();
-
     }
 
     /**
@@ -83,7 +82,7 @@ class API
         }
 
         $message = $this->GetText($notification->getLangKey());
-        if ($message === false) {
+        if ($message === null) {
             NotifLoader::getInstance()->getLogger()->alert('langKey: ' . $notification->getLangKey() . ' is not found in the Language File. Stopping the translation.');
             return 'Error while translating';
         }
@@ -101,13 +100,14 @@ class API
     /**
      * @param string $message
      * @param array|null $LangKey
-     * @return string
+     * @return string|null
      */
-    public function GetText(string $message, array $LangKey = null): string
+    public function GetText(string $message, array $LangKey = null): ?string
     {
+        if(!isset(NotifLoader::getInstance()->langKeys[$message])) return null;
         $text = NotifLoader::getInstance()->langKeys[$message];
         if ($LangKey !== null) {
-            $text = str_replace($LangKey[0], $LangKey[1], $message);
+            $text = str_replace($LangKey[0], $LangKey[1], $text);
         }
         return $text;
     }
