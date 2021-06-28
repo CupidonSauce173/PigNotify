@@ -76,7 +76,7 @@ class UI
         foreach ($notifList as $notification) {
             $form->addButton(NotifLoader::getInstance()->TranslateNotification($notification));
         }
-        $form->addButton('§lClose');
+        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
         $form->sendToPlayer($player);
     }
 
@@ -96,7 +96,7 @@ class UI
             PHP_EOL .
             NotifLoader::getInstance()->GetText('form.warn.notif')
         );
-        $form->addButton('§lClose');
+        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
         $form->sendToPlayer($player);
     }
 }
