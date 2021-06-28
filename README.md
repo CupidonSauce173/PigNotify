@@ -1,10 +1,11 @@
-# PigraidNotifications
+<p align="center">
+<img width="150" height="150" src="https://github.com/CupidonSauce173/PigraidNotifications/blob/main/PigNotifIcon.png" />
+</p>
+<h1 align="center"> Pigraid Notifications </h1>
+<p align="center">Join my discord: https://discord.gg/2QAPHbqrny </p>
+<p align="center">This is a notification system designed for the now deleted Pigraid Network. </p>
 
-Join my discord: https://discord.gg/2QAPHbqrny
-
-This is a notification system designed for the now deleted Pigraid Network.
-
-<h3>Known Issues</h3>
+### Known Issues
 
 - none
 
@@ -17,16 +18,16 @@ This is a notification system designed for the now deleted Pigraid Network.
 | Command Customization       | ✔️ |
 | Automated MySQL Constructor | ✔️ |
 
-<h3>Prerequisites</h3>
+### Prerequisites
 
 - Working MySQL Server.
 - FormAPI from Jojoe.
 
-<h3>Introduction</h3>
+### Introduction
 
 This is a notification system working with MySQL and is multi-threaded. The plugin will fetch notifications from the MySQL server, look if they have been displayed and display the notifications to the users. The plugin contain a simple API if you want to create third-party addons. This is a part of the Pigraid Network System.
 
-<h3>Notification Object</h3>
+### Notification Object
 
 The notifications have few properties that you can play with. Here's the list:
 
@@ -70,7 +71,7 @@ $notification->setEvent($event);
 $notification->getEvent($event); # Returns String.
 ```
 
-<h3>Config File</h3>
+### Config File
  
 The configuration file allows you to modify pretty much every aspects of the plugin. You can set the command you want and it's aliases, the permission and if the players needs the permission to use the command. You can also set the delays between checks from the database & if a notification has been displayed. Here's the list of settings you're allowed to change from the config file.
 
@@ -105,7 +106,7 @@ command-aliases:
   - n
 ```
 
-<h3>API</h3>
+### API
 
 The plugin offers a small and simple API that you can use along the notifications methods. Here are all the methods from the API.
 
@@ -150,7 +151,7 @@ public function onDeath(PlayerDeathEvent $event){
 
 ```
 
-<h3>How it works?</h3>
+### How it works?
 
 First, when the server first boosts, it will check if it can establish a MySQL connection, if it can't, it will close the server. Otherwise, it will create (if the structure doesn't exists) the database and the table / columns. Then, a repeatingTask will be started to check at every x amount of seconds all the notifications releated to the OnlinePlayers. It will exclude all already existing notifications in the server. Another repeatingTask is also ran to loop through all the notifications in the server and see if they have been displayed. If not, it will get the notification to a readable message (Translation System) and send a message to the target player and finally set the notification as "displayed". When the player disconnects from the server, all the notifications that are related to that player will be destroyed with the deleteNotification($notification) method.
 
