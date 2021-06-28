@@ -12,8 +12,7 @@ class NotifCommand extends Command
 {
     public function __construct()
     {
-        parent::__construct(
-            'notifications',
+        parent::__construct(NotifLoader::getInstance()->config['command-main'],
             NotifLoader::getInstance()->GetText('message.command.description'),
             '/' . NotifLoader::getInstance()->config['command-main'],
             NotifLoader::getInstance()->config['command-aliases']
