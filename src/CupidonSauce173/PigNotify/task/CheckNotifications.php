@@ -1,9 +1,9 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\task;
+namespace CupidonSauce173\PigNotify\task;
 
-use CupidonSauce173\PigraidNotifications\Object\Notification;
+use CupidonSauce173\PigNotify\Object\Notification;
 use Thread;
 use mysqli;
 use Exception;
@@ -59,7 +59,6 @@ class CheckNotifications extends Thread
                     }
                 }
                 # Get list of already existing notification ID's to create a smaller and more optimized query.
-
                 $idList = implode("','", $idList);
                 $result = $db->query("SELECT * FROM notifications WHERE player IN ('$players') AND id NOT IN ('$idList')");
                 # Set every existing notifications display column to 0 since they have been displayed for sure.

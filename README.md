@@ -1,7 +1,7 @@
 <p align="center">
 <img width="150" height="150" src="https://github.com/CupidonSauce173/PigraidNotifications/blob/main/PigNotifIcon.png" />
 </p>
-<h1 align="center"> Pigraid Notifications </h1>
+<h1 align="center"> PigNotify </h1>
 <p align="center">Join my discord: https://discord.gg/2QAPHbqrny </p>
 <p align="center">This is a notification system designed for the now deleted Pigraid Network. </p>
 
@@ -25,7 +25,7 @@
 
 ### Introduction
 
-This is a notification system working with MySQL and is multi-threaded. The plugin will fetch notifications from the MySQL server, look if they have been displayed and display the notifications to the users. The plugin contain a simple API if you want to create third-party addons. This is a part of the Pigraid Network System.
+This is a notification system working with MySQL and is multi-threaded. The plugin will fetch notifications from the MySQL server, look if they have been displayed and display the notifications to the users. The plugin contains a simple API if you want to create third-party addons. This is a part of the Pigraid Network System.
 
 ### Notification Object
 
@@ -40,7 +40,7 @@ The notifications have few properties that you can play with. Here's the list:
 | $event       | String       | The event of the notification, like FRIEND_REQUEST |
 | $player      | Player       | Target player (PMMP). |
 
-You can get and set the properties of the notification whenver you want.
+You can get and set the properties of the notification whenever you want.
 
 ```php
 # Note:
@@ -73,7 +73,7 @@ $notification->getEvent($event); # Returns String.
 
 ### Config File
  
-The configuration file allows you to modify pretty much every aspects of the plugin. You can set the command you want and it's aliases, the permission and if the players needs the permission to use the command. You can also set the delays between checks from the database & if a notification has been displayed. Here's the list of settings you're allowed to change from the config file.
+The configuration file allows you to modify pretty much any aspect of the plugin. You can set the command you want, and it's aliases, the permission and if the players needs the permission to use the command. You can also set the delays between checks from the database & if a notification has been displayed. Here's the list of settings you're allowed to change from the config file.
 
 ```yml
 
@@ -138,9 +138,10 @@ $api->deleteNotification($notification);
 $api->deleteNotifications($notifications);
 # Will return a string of readable text from a messageIndex with / without langKeys.
 $api->GetText($messageIndex, $langKeys);
-$api->GetText($messageIndex);
+$api->GetText($messageIndex); #If the messageIndex doesn't require any changes (ex: %sender%)
 # Will translate a notification using the GetText method to a readable message. 
 $api->TranslateNotification($notification);
+$api->TranslateNotification($notification, false); #If you don't want the prefix.
 
 
 public function onDeath(PlayerDeathEvent $event){
@@ -153,7 +154,7 @@ public function onDeath(PlayerDeathEvent $event){
 
 ### How it works?
 
-First, when the server first boosts, it will check if it can establish a MySQL connection, if it can't, it will close the server. Otherwise, it will create (if the structure doesn't exists) the database and the table / columns. Then, a repeatingTask will be started to check at every x amount of seconds all the notifications releated to the OnlinePlayers. It will exclude all already existing notifications in the server. Another repeatingTask is also ran to loop through all the notifications in the server and see if they have been displayed. If not, it will get the notification to a readable message (Translation System) and send a message to the target player and finally set the notification as "displayed". When the player disconnects from the server, all the notifications that are related to that player will be destroyed with the deleteNotification($notification) method.
+First, when the server first boosts, it will check if it can establish a MySQL connection, if it can't, it will close the server. Otherwise, it will create (if the structure doesn't exist) the database and the table / columns. Then, a repeatingTask will be started to check at every x amount of seconds all the notifications related to the OnlinePlayers. It will exclude all already existing notifications in the server. Another repeatingTask is also ran to loop through all the notifications in the server and see if they have been displayed. If not, it will get the notification to a readable message (Translation System) and send a message to the target player and finally set the notification as "displayed". When the player disconnects from the server, all the notifications that are related to that player will be destroyed with the deleteNotification($notification) method.
 
 <h3>How to create a notification</h3>
 
@@ -169,6 +170,6 @@ server -> API (createNotification) -> Database <- Checknotifications Task -> ser
 
 - You don't need to handle the PlayerQuitEvent to destruct the notifications. 
 - You don't need to handle the join event to look if there are notifications for the player. 
-- it is **NOT** recommended to set a check value smaller than 2 seconds. This could lead to performances issues.
+- it is **NOT** recommended setting a check value smaller than 2 seconds. This could lead to performances issues.
 - Running your MySQL server in the same machine as your server is the best idea.
 - **NEVER** set values in the notifications after they have been created, this could lead to weird behavior.

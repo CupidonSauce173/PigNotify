@@ -1,5 +1,5 @@
-name: PigraidNotifications
-main: CupidonSauce173\PigraidNotifications\NotifLoader
+name: PigNotify
+main: CupidonSauce173\PigNotify\NotifLoader
 version: 1.0.0
 api: 3.0.0
 author: CupidonSauce173

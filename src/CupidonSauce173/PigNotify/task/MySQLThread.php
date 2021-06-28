@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\task;
+namespace CupidonSauce173\PigNotify\task;
 
 use Thread;
 use mysqli;

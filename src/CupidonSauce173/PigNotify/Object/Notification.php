@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\Object;
+namespace CupidonSauce173\PigNotify\Object;
 
 class Notification
 {

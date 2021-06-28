@@ -1,12 +1,12 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\Utils;
+namespace CupidonSauce173\PigNotify\Utils;
 
 
-use CupidonSauce173\PigraidNotifications\NotifLoader;
-use CupidonSauce173\PigraidNotifications\Object\Notification;
-use CupidonSauce173\PigraidNotifications\task\MySQLThread;
+use CupidonSauce173\PigNotify\NotifLoader;
+use CupidonSauce173\PigNotify\Object\Notification;
+use CupidonSauce173\PigNotify\task\MySQLThread;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
@@ -71,9 +71,10 @@ class API
 
     /**
      * @param Notification $notification
+     * @param bool $prefix
      * @return string
      */
-    public function TranslateNotification(Notification $notification): string
+    public function TranslateNotification(Notification $notification, bool $prefix = true): string
     {
         $keys = [];
         foreach ($notification->getVarKeys() as $key) {
@@ -93,7 +94,7 @@ class API
                 $message = 'Unknown Index: ' . $key . ' with ' . $value . ' as value.';
             }
         }
-        $message = NotifLoader::getInstance()->config['prefix'] . TextFormat::RESET . $message;
+        if($prefix) return NotifLoader::getInstance()->config['prefix'] . TextFormat::RESET . $message;
         return $message;
     }
 

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\task;
+namespace CupidonSauce173\PigNotify\task;
 
 
-use CupidonSauce173\PigraidNotifications\NotifLoader;
-use CupidonSauce173\PigraidNotifications\Object\Notification;
+use CupidonSauce173\PigNotify\NotifLoader;
+use CupidonSauce173\PigNotify\Object\Notification;
 use pocketmine\scheduler\Task;
 
 class DisplayTask extends Task

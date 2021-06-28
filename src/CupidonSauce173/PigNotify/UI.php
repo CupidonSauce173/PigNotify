@@ -1,10 +1,10 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications;
+namespace CupidonSauce173\PigNotify;
 
 
-use CupidonSauce173\PigraidNotifications\Object\Notification;
+use CupidonSauce173\PigNotify\Object\Notification;
 use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 
@@ -72,7 +72,7 @@ class UI
         $form->setContent(NotifLoader::getInstance()->GetText('form.content.list'));
         /** @var Notification $notification */
         foreach ($notifList as $notification) {
-            $form->addButton(NotifLoader::getInstance()->TranslateNotification($notification));
+            $form->addButton(NotifLoader::getInstance()->TranslateNotification($notification, false));
         }
         $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
         $form->sendToPlayer($player);

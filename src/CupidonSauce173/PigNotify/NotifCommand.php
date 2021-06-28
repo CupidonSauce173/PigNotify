@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications;
+namespace CupidonSauce173\PigNotify;
 
 
 use pocketmine\command\Command;

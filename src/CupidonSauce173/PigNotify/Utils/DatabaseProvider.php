@@ -1,9 +1,9 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications\Utils;
+namespace CupidonSauce173\PigNotify\Utils;
 
-use CupidonSauce173\PigraidNotifications\NotifLoader;
+use CupidonSauce173\PigNotify\NotifLoader;
 use mysqli;
 
 class DatabaseProvider

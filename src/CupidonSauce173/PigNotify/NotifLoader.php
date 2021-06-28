@@ -1,22 +1,21 @@
 <?php
 
 
-namespace CupidonSauce173\PigraidNotifications;
+namespace CupidonSauce173\PigNotify;
 
 
-use CupidonSauce173\PigraidNotifications\Object\Notification;
-use CupidonSauce173\PigraidNotifications\task\CheckDisplayed;
-use CupidonSauce173\PigraidNotifications\task\CheckNotifications;
-use CupidonSauce173\PigraidNotifications\task\DisplayTask;
-use CupidonSauce173\PigraidNotifications\Utils\API;
-use CupidonSauce173\PigraidNotifications\Utils\DatabaseProvider;
+use CupidonSauce173\PigNotify\Object\Notification;
+use CupidonSauce173\PigNotify\task\CheckDisplayed;
+use CupidonSauce173\PigNotify\task\CheckNotifications;
+use CupidonSauce173\PigNotify\task\DisplayTask;
+use CupidonSauce173\PigNotify\Utils\API;
+use CupidonSauce173\PigNotify\Utils\DatabaseProvider;
 use jojoe77777\FormAPI\FormAPI;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\scheduler\Task;
 use pocketmine\utils\Config;
 
 use Thread;
@@ -95,7 +94,7 @@ class NotifLoader extends PluginBase implements Listener
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->form = $this->getServer()->getPluginManager()->getPlugin('FormAPI');
 
-        $this->getServer()->getCommandMap()->register('Notifications', new NotifCommand());
+        $this->getServer()->getCommandMap()->register('PigNotifications', new NotifCommand());
     }
 
     /**
@@ -162,11 +161,12 @@ class NotifLoader extends PluginBase implements Listener
 
     /**
      * @param Notification $notification
+     * @param bool $prefix
      * @return string
      */
-    public function TranslateNotification(Notification $notification): string
+    public function TranslateNotification(Notification $notification, bool $prefix = true): string
     {
-        return $this->api->TranslateNotification($notification);
+        return $this->api->TranslateNotification($notification, $prefix);
     }
 
     # Events Section
