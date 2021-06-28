@@ -65,9 +65,7 @@ class UI
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifList) {
             if ($data === null) return;
             $count = count($notifList);
-            if ($data === $count) {
-                return;
-            }
+            if ((int)$data === $count) return;
             $this->SelectedNotification($player, $notifList[$data]);
         });
         $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));

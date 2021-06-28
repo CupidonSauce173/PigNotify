@@ -19,16 +19,29 @@ use function sort;
 
 class API
 {
+    /**
+     * @param Player $player
+     * @param string $langKey
+     * @param string $event
+     * @param array|null $varKeys
+     */
     public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
     {
+        # Note, varKeys build = array ( 0 => "sender|server", 1 => "sender|friend1" )
         $target = $player->getName();
-        $thread = new MySQLThread(
-            "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES ('$target','$langKey','$varKeys','$event')",
-            NotifLoader::getInstance()->DBInfo
-        );
+        if($varKeys !== null){
+            $keys = implode(',', $varKeys);
+            $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES ('$target','$langKey','$keys','$event')";
+        }else{
+            $query = "INSERT INTO notifications (player,langKey,event) VALUES ('$target','$langKey','$event')";
+        }
+        $thread = new MySQLThread($query, NotifLoader::getInstance()->DBInfo);
         $thread->start();
     }
 
+    /**
+     * @param Notification $notification
+     */
     public function deleteNotification(Notification $notification): void
     {
         $id = (int)$notification->getId();
@@ -38,8 +51,12 @@ class API
         sort(NotifLoader::getInstance()->notificationList[$user]);
         $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
         $thread->start();
+
     }
 
+    /**
+     * @param array $notificationList
+     */
     public function deleteNotifications(array $notificationList): void
     {
         $ids = [];
@@ -53,6 +70,10 @@ class API
         $thread->start();
     }
 
+    /**
+     * @param Notification $notification
+     * @return string
+     */
     public function TranslateNotification(Notification $notification): string
     {
         $keys = [];
@@ -77,6 +98,11 @@ class API
         return $message;
     }
 
+    /**
+     * @param string $message
+     * @param array|null $LangKey
+     * @return string
+     */
     public function GetText(string $message, array $LangKey = null): string
     {
         $text = NotifLoader::getInstance()->langKeys[$message];

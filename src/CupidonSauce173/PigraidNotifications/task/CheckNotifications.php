@@ -21,6 +21,13 @@ class CheckNotifications extends Thread
 
     public Volatile $sharedStore;
 
+    /**
+     * CheckNotifications constructor.
+     * @param array $players
+     * @param array $DBInfo
+     * @param array $notifications
+     * @param Volatile $store
+     */
     public function __construct(array $players, array $DBInfo, array $notifications, Volatile $store)
     {
         $this->players = $players;

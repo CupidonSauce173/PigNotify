@@ -129,32 +129,57 @@ class NotifLoader extends PluginBase implements Listener
 
     # API Section
 
+    /**
+     * @param Player $player
+     * @param string $langKey
+     * @param string $event
+     * @param array|null $varKeys
+     */
     public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
     {
         $this->api->createNotification($player, $langKey, $event, $varKeys);
     }
 
+    /**
+     * @param string $player
+     * @return array
+     */
     public function getPlayerNotifications(string $player): array
     {
         if(!isset($this->notificationList[$player])) $this->notificationList[$player] = [];
         return $this->notificationList[$player];
     }
 
+    /**
+     * @param Notification $notification
+     */
     public function deleteNotification(Notification $notification): void
     {
         $this->api->deleteNotification($notification);
     }
 
+    /**
+     * @param array $notificationList
+     */
     public function deleteNotifications(array $notificationList): void
     {
         $this->api->deleteNotifications($notificationList);
     }
 
+    /**
+     * @param string $messageKey
+     * @param array|null $LangKeys
+     * @return string
+     */
     public function GetText(string $messageKey, array $LangKeys = null): string
     {
         return $this->api->GetText($messageKey, $LangKeys);
     }
 
+    /**
+     * @param Notification $notification
+     * @return string
+     */
     public function TranslateNotification(Notification $notification): string
     {
         return $this->api->TranslateNotification($notification);
@@ -162,10 +187,12 @@ class NotifLoader extends PluginBase implements Listener
 
     # Events Section
 
+    /**
+     * @param PlayerQuitEvent $event
+     */
     public function onLeave(PlayerQuitEvent $event): void
     {
         $player = $event->getPlayer();
-        /** @var Notification $notification */
         if (!isset($this->notificationList[$player->getName()])) return;
         $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
     }
