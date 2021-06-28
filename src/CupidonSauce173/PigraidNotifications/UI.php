@@ -25,11 +25,17 @@ class UI
     public function MainForm(Player $player): void
     {
         $notifications = NotifLoader::getInstance()->getPlayerNotifications($player->getName());
-        $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifications) {
+        $count = count($notifications);
+
+        $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifications, $count) {
             if ($data === null) return;
             switch ($data) {
                 case 0:
-                    $this->NotificationList($player, $notifications);
+                    if($count !== 0){
+                        $this->NotificationList($player, $notifications);
+                     break;
+                    }
+                    $player->sendMessage(NotifLoader::getInstance()->config['prefix'] . NotifLoader::getInstance()->GetText('message.no.notif'));
                     break;
                 case 1:
                     NotifLoader::getInstance()->deleteNotifications($notifications);
@@ -38,15 +44,15 @@ class UI
                     break;
             }
         });
-        $form->setTitle('Notifications');
-        $form->setContent("Notification system. You can see or delete all your notifications here.");
-        if (count($notifications) !== 0) {
-            $form->addButton('§lNotifications', 0, 'textures/ui/ErrorGlyph');
+        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
+        $form->setContent(NotifLoader::getInstance()->GetText('form.content.main'));
+        if ($count !== 0) {
+            $form->addButton(str_replace('%count%' , $count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
         } else {
-            $form->addButton('§lNotifications', 0, 'textures/ui/Caution');
+            $form->addButton(NotifLoader::getInstance()->GetText('form.notification.button'), 0, 'textures/ui/Caution');
         }
-        $form->addButton('§lClear all');
-        $form->addButton('§lClose');
+        $form->addButton(NotifLoader::getInstance()->GetText('form.clearAll.button'));
+        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
         $form->sendToPlayer($player);
     }
 
@@ -64,8 +70,8 @@ class UI
             }
             $this->SelectedNotification($player, $notifList[$data]);
         });
-        $form->setTitle('Notifications');
-        $form->setContent('Notification list.');
+        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
+        $form->setContent(NotifLoader::getInstance()->GetText('form.content.list'));
         /** @var Notification $notification */
         foreach ($notifList as $notification) {
             $form->addButton(NotifLoader::getInstance()->TranslateNotification($notification));
@@ -84,11 +90,11 @@ class UI
             NotifLoader::getInstance()->deleteNotification($notification);
             $this->MainForm($player);
         });
-        $form->setTitle('Notifications');
+        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
         $form->setContent(
             NotifLoader::getInstance()->TranslateNotification($notification) .
             PHP_EOL .
-            '§rThis notification will be removed when you leave this page.'
+            NotifLoader::getInstance()->GetText('form.warn.notif')
         );
         $form->addButton('§lClose');
         $form->sendToPlayer($player);

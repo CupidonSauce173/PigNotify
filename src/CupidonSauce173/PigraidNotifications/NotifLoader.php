@@ -150,9 +150,9 @@ class NotifLoader extends PluginBase implements Listener
         $this->api->deleteNotifications($notificationList);
     }
 
-    public function GetText(string $message, array $LangKeys = null): string
+    public function GetText(string $messageKey, array $LangKeys = null): string
     {
-        return $this->api->GetText($message, $LangKeys);
+        return $this->api->GetText($messageKey, $LangKeys);
     }
 
     public function TranslateNotification(Notification $notification): string

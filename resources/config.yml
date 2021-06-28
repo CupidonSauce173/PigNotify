@@ -18,8 +18,6 @@ prefix: "Notify > "
 use-permission: false
 # Permission to use this command.
 permission: "pig.notification.command"
-# Message if the player doesn't have the permission.
-no-permission-message: "You do not have the necessary permissions!"
 # Main command, /notification for example.
 command-main: "notification"
 # Aliases to use this command, /notif or /n for example.

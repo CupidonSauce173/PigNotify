@@ -14,7 +14,7 @@ class NotifCommand extends Command
     {
         parent::__construct(
             'notifications',
-            'Command to see all your notifications.',
+            NotifLoader::getInstance()->GetText('message.command.description'),
             '/' . NotifLoader::getInstance()->config['command-main'],
             NotifLoader::getInstance()->config['command-aliases']
         );
@@ -26,7 +26,7 @@ class NotifCommand extends Command
     {
         if (NotifLoader::getInstance()->config['permission']) {
             if (!$sender->hasPermission($this->getPermission())) {
-                $sender->sendMessage(NotifLoader::getInstance()->config['no-permission-message']);
+                $sender->sendMessage(NotifLoader::getInstance()->GetText('message.no.perm'));
                 return;
             }
         }
