@@ -6,6 +6,7 @@ namespace CupidonSauce173\PigraidNotifications\task;
 use Thread;
 use mysqli;
 use Exception;
+use mysqli_sql_exception;
 
 class MySQLThread extends Thread
 {
@@ -28,12 +29,13 @@ class MySQLThread extends Thread
     public function run()
     {
         $DBInfo = $this->DBInfo;
-        $db = new mysqli($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-        if ($db->connect_error) {
-            new Exception("Couldn't connect to the MySQL database: $db->connect_error");
-            return;
+        $db = new mysqli();
+        try{
+            $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
+            $db->query($this->query);
+            $db->close(); # Close the connection to MySQL.
+        }catch (mysqli_sql_exception $e){
+            new Exception($e->getMessage());
         }
-        $db->query($this->query);
-        $db->close(); # Close the connection to MySQL.
     }
 }
