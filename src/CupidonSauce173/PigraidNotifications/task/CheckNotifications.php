@@ -37,6 +37,9 @@ class CheckNotifications extends Thread
         $this->sharedStore = $store;
     }
 
+    /**
+     * @throws Exception
+     */
     public function run()
     {
         if (count($this->players) === 0) return;
@@ -78,7 +81,7 @@ class CheckNotifications extends Thread
             $this->sharedStore['notifications'] = (array)$notifications;
             $db->close();
         }catch (mysqli_sql_exception $e){
-            new Exception($e->getMessage());
+           throw new Exception($e->getMessage());
         }
     }
 }

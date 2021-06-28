@@ -26,6 +26,9 @@ class MySQLThread extends Thread
         $this->DBInfo = $DBInfo;
     }
 
+    /**
+     * @throws Exception
+     */
     public function run()
     {
         $DBInfo = $this->DBInfo;
@@ -35,7 +38,7 @@ class MySQLThread extends Thread
             $db->query($this->query);
             $db->close(); # Close the connection to MySQL.
         }catch (mysqli_sql_exception $e){
-            new Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 }
