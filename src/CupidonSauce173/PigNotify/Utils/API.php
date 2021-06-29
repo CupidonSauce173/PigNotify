@@ -68,7 +68,7 @@ class API
         $ids = implode("','", $ids);
         $thread = new MySQLThread(
             "DELETE FROM notifications WHERE id IN (?)",
-            NotifLoader::getInstance()->DBInfo, $ids);
+            NotifLoader::getInstance()->DBInfo, [$ids]);
         $thread->start();
     }
 

@@ -5,7 +5,6 @@ namespace CupidonSauce173\PigNotify;
 
 
 use CupidonSauce173\PigNotify\Object\Notification;
-use CupidonSauce173\PigNotify\task\CheckDisplayed;
 use CupidonSauce173\PigNotify\task\CheckNotifications;
 use CupidonSauce173\PigNotify\task\DisplayTask;
 use CupidonSauce173\PigNotify\Utils\API;

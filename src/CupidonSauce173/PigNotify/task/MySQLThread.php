@@ -6,7 +6,9 @@ namespace CupidonSauce173\PigNotify\task;
 use Thread;
 use mysqli;
 use Exception;
-use mysqli_sql_exception;
+
+use function str_repeat;
+use function count;
 
 class MySQLThread extends Thread
 {
