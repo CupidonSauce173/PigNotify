@@ -15,9 +15,12 @@ class UI
 {
     private FormAPI $api;
 
+    /**
+     * UI constructor.
+     */
     public function __construct()
     {
-        $this->api = NotifLoader::getInstance()->form;
+        $this->api = new FormAPI();
     }
 
     /**

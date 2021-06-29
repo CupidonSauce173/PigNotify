@@ -21,7 +21,6 @@
 ### Prerequisites
 
 - Working MySQL Server.
-- FormAPI from Jojoe.
 
 ### Introduction
 

@@ -3,5 +3,4 @@ main: CupidonSauce173\PigNotify\NotifLoader
 version: 2.0.0
 api: 3.0.0
 author: CupidonSauce173
-description: Notification System
-depend: ["FormAPI"]
+description: MultiThreaded Notifications system using jojoe's form API lib.

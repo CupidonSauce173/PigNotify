@@ -9,7 +9,6 @@ use CupidonSauce173\PigNotify\task\CheckNotifications;
 use CupidonSauce173\PigNotify\task\DisplayTask;
 use CupidonSauce173\PigNotify\Utils\API;
 use CupidonSauce173\PigNotify\Utils\DatabaseProvider;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
@@ -29,7 +28,6 @@ class NotifLoader extends PluginBase implements Listener
 {
     # Contains all notification objects by player 'CupidonSauce173' => [list of notifications objects].
     public array $notificationList = [];
-    public FormAPI $form;
 
     private API $api;
 
@@ -91,8 +89,6 @@ class NotifLoader extends PluginBase implements Listener
 
         $this->getScheduler()->scheduleRepeatingTask(new DisplayTask(), $this->config['check-displayed-task'] * 20);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->form = $this->getServer()->getPluginManager()->getPlugin('FormAPI');
-
         $this->getServer()->getCommandMap()->register('PigNotifications', new NotifCommand());
     }
 

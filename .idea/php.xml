@@ -4,7 +4,6 @@
     <include_path>
       <path value="$USER_HOME$/OneDrive/Documents/PocketMine-MP-3.21.0" />
       <path value="$USER_HOME$/OneDrive/Documents/CryoCore/CryoServersCore-master" />
-      <path value="$USER_HOME$/OneDrive/Documents/CryoCore/FormAPI-master" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
