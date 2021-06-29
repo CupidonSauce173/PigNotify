@@ -6,9 +6,11 @@ namespace CupidonSauce173\PigNotify;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\Player;
+use pocketmine\plugin\Plugin;
 
-class NotifCommand extends Command
+class NotifCommand extends Command implements PluginIdentifiableCommand
 {
     /**
      * NotifCommand constructor.
@@ -20,7 +22,7 @@ class NotifCommand extends Command
             '/' . NotifLoader::getInstance()->config['command-main'],
             NotifLoader::getInstance()->config['command-aliases']
         );
-        $this->setPermission(NotifLoader::getInstance()->config['permission']);
+        $this->setPermission('PigNotify.'. NotifLoader::getInstance()->config['permission']);
     }
 
     /**
@@ -39,5 +41,10 @@ class NotifCommand extends Command
         $ui = new UI();
         /** @var Player $sender */
         $ui->MainForm($sender);
+    }
+
+    public function getPlugin(): Plugin
+    {
+        return NotifLoader::getInstance();
     }
 }

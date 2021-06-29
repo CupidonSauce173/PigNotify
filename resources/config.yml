@@ -16,8 +16,9 @@ prefix: "Notify > "
 
 # Set to false if you don't want to look if the user has the permission to use this command.
 use-permission: false
-# Permission to use this command.
-permission: "pig.notification.command"
+# Permission to use this command. NOTE: whatever permission you put, NotifyPig will always be at the beginning. Example :
+# permission: notification.command, the permission will be NotifyPig.notification.command
+permission: "notification.command"
 # Main command, /notification for example.
 command-main: "notification"
 # Aliases to use this command, /notif or /n for example.
