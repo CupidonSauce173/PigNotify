@@ -177,6 +177,10 @@ class NotifLoader extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
         if (!isset($this->notificationList[$player->getName()])) return;
-        $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
+        if($this->config['delete-on-disconnect']){
+            $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
+            return;
+        }
+        unset($this->notificationList[$player->getName()]);
     }
 }

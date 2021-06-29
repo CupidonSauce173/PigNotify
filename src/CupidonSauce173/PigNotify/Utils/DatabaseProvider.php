@@ -30,7 +30,7 @@ class DatabaseProvider
     public function CreateDatabaseStructure(): void
     {
         $this->db->query("CREATE TABLE IF NOT EXISTS notifications(
-        id MEDIUMINT NOT NULL,
+        id MEDIUMINT NOT NULL AUTO_INCREMENT,
         displayed TINYINT(1) NOT NULL DEFAULT FALSE,
         player VARCHAR(15) NOT NULL,
         langKey VARCHAR(255) NOT NULL,

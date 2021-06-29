@@ -9,6 +9,7 @@ use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 
 use function count;
+use function str_replace;
 
 class UI
 {
@@ -84,7 +85,7 @@ class UI
      */
     public function SelectedNotification(Player $player, Notification $notification): void
     {
-        $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notification) {
+        $form = $this->api->createSimpleForm(function (Player $player) use ($notification) {
             NotifLoader::getInstance()->deleteNotification($notification);
             $this->MainForm($player);
         });

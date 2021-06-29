@@ -14,6 +14,9 @@ check-displayed-task: 2
 # Prefix for the messages.
 prefix: "Notify > "
 
+# Delete all notifications of a user when they leave the server. (RECOMMENDED)
+delete-on-disconnect: true
+
 # Set to false if you don't want to look if the user has the permission to use this command.
 use-permission: false
 # Permission to use this command. NOTE: whatever permission you put, NotifyPig will always be at the beginning. Example :
