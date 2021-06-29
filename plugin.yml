@@ -1,8 +1,7 @@
 name: PigNotify
 main: CupidonSauce173\PigNotify\NotifLoader
-version: 1.0.0
+version: 2.0.0
 api: 3.0.0
 author: CupidonSauce173
 description: Notification System
-depend:
-  - FormAPI
+depend: ["FormAPI"]
