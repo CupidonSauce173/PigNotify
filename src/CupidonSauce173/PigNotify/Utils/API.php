@@ -28,14 +28,15 @@ class API
     public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
     {
         # Note, varKeys build = array ( 0 => "sender|server", 1 => "sender|friend1" )
-        $target = $player->getName();
         if ($varKeys !== null) {
             $keys = implode(',', $varKeys);
-            $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES ('$target','$langKey','$keys','$event')";
+            $data = [$player->getName(), $langKey, $keys, $event];
+            $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES (?,?,?,?)";
         } else {
-            $query = "INSERT INTO notifications (player,langKey,event) VALUES ('$target','$langKey','$event')";
+            $data = [$player->getName(), $langKey, $event];
+            $query = "INSERT INTO notifications (player,langKey,event) VALUES (?,?,?)";
         }
-        $thread = new MySQLThread($query, NotifLoader::getInstance()->DBInfo);
+        $thread = new MySQLThread($query, NotifLoader::getInstance()->DBInfo, $data);
         $thread->start();
     }
 
@@ -44,12 +45,12 @@ class API
      */
     public function deleteNotification(Notification $notification): void
     {
-        $id = (int)$notification->getId();
+        $id = $notification->getId();
         $key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true);
         $user = $notification->getPlayer();
         unset(NotifLoader::getInstance()->notificationList[$user][$key]);
         sort(NotifLoader::getInstance()->notificationList[$user]);
-        $thread = new MySQLThread("DELETE FROM notifications WHERE id = $id", NotifLoader::getInstance()->DBInfo);
+        $thread = new MySQLThread("DELETE FROM notifications WHERE id = ?", NotifLoader::getInstance()->DBInfo, [$id]);
         $thread->start();
     }
 
@@ -65,7 +66,9 @@ class API
             NotifLoader::getInstance()->notificationList[$notif->getPlayer()] = [];
         }
         $ids = implode("','", $ids);
-        $thread = new MySQLThread("DELETE FROM notifications WHERE id IN ('$ids')", NotifLoader::getInstance()->DBInfo);
+        $thread = new MySQLThread(
+            "DELETE FROM notifications WHERE id IN (?)",
+            NotifLoader::getInstance()->DBInfo, $ids);
         $thread->start();
     }
 

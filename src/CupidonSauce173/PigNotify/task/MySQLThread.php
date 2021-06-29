@@ -12,6 +12,7 @@ class MySQLThread extends Thread
 {
     private string $query;
     private array $DBInfo;
+    private array $data;
 
     # You must prepare the whole query before sending it to the thread.
 
@@ -19,11 +20,13 @@ class MySQLThread extends Thread
      * MySQLThread constructor.
      * @param string $query
      * @param array $DBInfo
+     * @param array $data
      */
-    public function __construct(string $query, array $DBInfo)
+    public function __construct(string $query, array $DBInfo, array $data)
     {
         $this->query = $query;
         $this->DBInfo = $DBInfo;
+        $this->data = $data;
     }
 
     /**
@@ -33,12 +36,13 @@ class MySQLThread extends Thread
     {
         $DBInfo = $this->DBInfo;
         $db = new mysqli();
-        try {
-            $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-            $db->query($this->query);
-            $db->close(); # Close the connection to MySQL.
-        } catch (mysqli_sql_exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
+        if($db->connect_error !== null) throw new Exception($db->connect_error);
+        $query = $db->prepare($this->query);
+        $data = (array)$this->data;
+        $types = str_repeat('s', count($data));
+        $query->bind_param($types, ...$data);
+        $query->execute();
+        $db->close(); # Close the connection to MySQL.
     }
 }
