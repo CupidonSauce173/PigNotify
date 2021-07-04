@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify;
 
@@ -54,6 +55,10 @@ class NotifLoader extends PluginBase implements Listener
         $config = new Config($this->getDataFolder() . 'config.yml', Config::YAML);
         $this->config = $config->getAll();
         $this->DBInfo = $this->config['MySQL'];
+        if (preg_match('/[^A-Za-z-.]/', $this->config['permission'])) {
+            $this->getLogger()->error('Wrong permission setting. Please do not put any special characters.');
+            $this->getServer()->shutdown();
+        }
 
         new DatabaseProvider();
 
@@ -89,7 +94,7 @@ class NotifLoader extends PluginBase implements Listener
 
         $this->getScheduler()->scheduleRepeatingTask(new DisplayTask(), $this->config['check-displayed-task'] * 20);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->getServer()->getCommandMap()->register('PigNotifications', new NotifCommand());
+        $this->getServer()->getCommandMap()->register('PigNotify', new NotifCommand());
     }
 
     /**
@@ -173,7 +178,7 @@ class NotifLoader extends PluginBase implements Listener
     {
         $player = $event->getPlayer();
         if (!isset($this->notificationList[$player->getName()])) return;
-        if($this->config['delete-on-disconnect']){
+        if ($this->config['delete-on-disconnect']) {
             $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
             return;
         }

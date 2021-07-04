@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify\task;
 
@@ -39,7 +40,7 @@ class MySQLThread extends Thread
         $DBInfo = $this->DBInfo;
         $db = new mysqli();
         $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
-        if($db->connect_error !== null) throw new Exception($db->connect_error);
+        if ($db->connect_error !== null) throw new Exception($db->connect_error);
         $query = $db->prepare($this->query);
         $data = (array)$this->data;
         $types = str_repeat('s', count($data));

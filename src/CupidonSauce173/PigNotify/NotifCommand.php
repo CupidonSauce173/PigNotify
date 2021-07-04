@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify;
 
@@ -22,7 +23,9 @@ class NotifCommand extends Command implements PluginIdentifiableCommand
             '/' . NotifLoader::getInstance()->config['command-main'],
             NotifLoader::getInstance()->config['command-aliases']
         );
-        $this->setPermission('PigNotify.'. NotifLoader::getInstance()->config['permission']);
+        if (NotifLoader::getInstance()->config['use-permission']) {
+            $this->setPermission('PigNotify.' . NotifLoader::getInstance()->config['permission']);
+        }
     }
 
     /**
@@ -32,7 +35,7 @@ class NotifCommand extends Command implements PluginIdentifiableCommand
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): void
     {
-        if (NotifLoader::getInstance()->config['permission']) {
+        if (NotifLoader::getInstance()->config['use-permission']) {
             if (!$sender->hasPermission($this->getPermission())) {
                 $sender->sendMessage(NotifLoader::getInstance()->GetText('message.no.perm'));
                 return;

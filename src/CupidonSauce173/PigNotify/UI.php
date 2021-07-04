@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify;
 
 
+use CupidonSauce173\PigNotify\lib\FormAPI;
 use CupidonSauce173\PigNotify\Object\Notification;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 
 use function count;
