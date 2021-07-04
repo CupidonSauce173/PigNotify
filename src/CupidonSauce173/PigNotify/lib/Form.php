@@ -61,9 +61,6 @@ abstract class Form implements IForm
         }
     }
 
-    /**
-     * @param $data
-     */
     public function processData(&$data): void
     {
     }
