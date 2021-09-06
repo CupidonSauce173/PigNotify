@@ -21,7 +21,7 @@ class SimpleForm extends Form
         $this->data["title"] = "";
         $this->data["content"] = $this->content;
     }
-    
+
     public function processData(&$data): void
     {
         $data = $this->labelMap[$data] ?? null;
