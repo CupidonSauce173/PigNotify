@@ -6,11 +6,12 @@ namespace CupidonSauce173\PigNotify;
 
 
 use CupidonSauce173\PigNotify\Object\Notification;
-use CupidonSauce173\PigNotify\task\CheckNotifications;
-use CupidonSauce173\PigNotify\task\DisplayTask;
+use CupidonSauce173\PigNotify\task\DispatchNotifications;
+use CupidonSauce173\PigNotify\task\NotificationThread;
 use CupidonSauce173\PigNotify\Utils\API;
 use CupidonSauce173\PigNotify\Utils\DatabaseProvider;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
@@ -27,85 +28,72 @@ use function parse_ini_file;
 
 class NotifLoader extends PluginBase implements Listener
 {
-    # Contains all notification objects by player 'CupidonSauce173' => [list of notifications objects].
-    public array $notificationList = [];
-
     private API $api;
 
-    public array $config;
     public array $DBInfo;
     public array $langKeys;
 
-    public static NotifLoader $instance;
+    static NotifLoader $instance;
 
     public Thread $thread;
-    public Volatile $sharedStore;
+    public Volatile $container;
 
-    public function onEnable()
+    function onEnable(): void
     {
-        self::$instance = $this;
+        # File integrity check
         if (!file_exists($this->getDataFolder() . 'config.yml')) {
             $this->saveResource('config.yml');
         }
         if (!file_exists($this->getDataFolder() . 'langKeys.ini')) {
             $this->saveResource('langKeys.ini');
         }
+
+        $config = new Config($this->getDataFolder() . 'config.yml', Config::YAML);
+
+        # Preparing the volatile container
+        $this->container = new Volatile();
+        $this->container[0] = [];
+        $this->container[0]['players'] = [];
+        $this->container[0]['folder'] = __DIR__;
+        $this->container[1] = $config->getAll();
+        $this->container[2] = []; # Contains all notification objects
+        $this->container[3] = true;
+
         $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
         $this->api = new API();
-        $config = new Config($this->getDataFolder() . 'config.yml', Config::YAML);
-        $this->config = $config->getAll();
-        $this->DBInfo = $this->config['MySQL'];
-        if (preg_match('/[^A-Za-z-.]/', $this->config['permission'])) {
+        $this->DBInfo = (array)$this->container[1]['MySQL'];
+        if (preg_match('/[^A-Za-z-.]/', $this->container[1]['permission'])) {
             $this->getLogger()->error('Wrong permission setting. Please do not put any special characters.');
             $this->getServer()->shutdown();
         }
 
         new DatabaseProvider();
 
-        $this->sharedStore = new Volatile();
-        $this->thread = new CheckNotifications([], $this->DBInfo, $this->notificationList, $this->sharedStore);
+        # Prepare & start thread.
+        $this->thread = new NotificationThread($this->DBInfo, $this->container);
         $this->thread->start();
-        # Schedule Async data every check-time seconds.
-        $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(
-            function (): void {
-                if ($this->thread->isRunning() === false) {
-                    $names = [];
-                    foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                        $names[] = $player->getName();
-                    }
-                    $this->thread = new CheckNotifications($names, $this->DBInfo, $this->notificationList, $this->sharedStore);
-                    $this->thread->start() && $this->thread->join();
-                    foreach ($names as $name) {
-                        if (!isset($this->sharedStore['notifications'][$name])) return;
-                        foreach ($this->sharedStore['notifications'][$name] as $data) {
-                            $notif = new Notification();
-                            $notif->setId((int)$data['id']);
-                            $notif->setPlayer($data['player']);
-                            $notif->setEvent($data['event']);
-                            $notif->setLangKey($data['langKey']);
-                            $notif->setVarKeys(explode(',', $data['varKeys']));
-                            $notif->setDisplayed((bool)$data['displayed']);
-                            $this->notificationList[$data['player']][] = $notif;
-                        }
-                    }
-                }
-            }
-        ), $this->config['check-database-task'] * 20);
 
-        $this->getScheduler()->scheduleRepeatingTask(new DisplayTask(), $this->config['check-displayed-task'] * 20);
+        $this->getScheduler()->scheduleRepeatingTask(new DispatchNotifications(), $this->container[1]['check-displayed-task'] * 20);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getCommandMap()->register('PigNotify', new NotifCommand());
+    }
+
+
+    function onDisable(): void
+    {
+        # Stopping the NotificationThread
+        $this->container[3] = false;
     }
 
     /**
      * @return NotifLoader
      */
-    public static function getInstance(): self
+    static function getInstance(): self
     {
         return self::$instance;
     }
 
-    public function onLoad()
+    function onLoad(): void
     {
         self::$instance = $this;
     }
@@ -118,35 +106,35 @@ class NotifLoader extends PluginBase implements Listener
      * @param string $event
      * @param array|null $varKeys
      */
-    public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
+    function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
     {
         $this->api->createNotification($player, $langKey, $event, $varKeys);
     }
 
     /**
      * @param string $player
-     * @return array
+     * @return array|null
      */
-    public function getPlayerNotifications(string $player): array
+    function getPlayerNotifications(string $player): ?array
     {
-        if (!isset($this->notificationList[$player])) $this->notificationList[$player] = [];
-        return $this->notificationList[$player];
+        if (!isset($this->container[2][$player])) return null;
+        return $this->container[2][$player];
     }
 
     /**
      * @param Notification $notification
      */
-    public function deleteNotification(Notification $notification): void
+    function deleteNotification(Notification $notification): void
     {
         $this->api->deleteNotification($notification);
     }
 
     /**
-     * @param array $notificationList
+     * @param array $toDelete
      */
-    public function deleteNotifications(array $notificationList): void
+    function deleteNotifications(array $toDelete): void
     {
-        $this->api->deleteNotifications($notificationList);
+        $this->api->deleteNotifications($toDelete);
     }
 
     /**
@@ -154,7 +142,7 @@ class NotifLoader extends PluginBase implements Listener
      * @param array|null $LangKeys
      * @return string|null
      */
-    public function GetText(string $messageKey, array $LangKeys = null): ?string
+    function GetText(string $messageKey, array $LangKeys = null): ?string
     {
         return $this->api->GetText($messageKey, $LangKeys);
     }
@@ -164,24 +152,26 @@ class NotifLoader extends PluginBase implements Listener
      * @param bool $prefix
      * @return string
      */
-    public function TranslateNotification(Notification $notification, bool $prefix = true): string
+    function TranslateNotification(Notification $notification, bool $prefix = true): string
     {
         return $this->api->TranslateNotification($notification, $prefix);
     }
 
     # Events Section
 
+    function onJoin(PlayerJoinEvent $event): void
+    {
+        $this->container[0]['players'][] = $event->getPlayer()->getName();
+    }
+
     /**
      * @param PlayerQuitEvent $event
      */
-    public function onLeave(PlayerQuitEvent $event): void
+    function onLeave(PlayerQuitEvent $event): void
     {
-        $player = $event->getPlayer();
-        if (!isset($this->notificationList[$player->getName()])) return;
-        if ($this->config['delete-on-disconnect']) {
-            $this->deleteNotifications($this->getPlayerNotifications($player->getName()));
-            return;
-        }
-        unset($this->notificationList[$player->getName()]);
+        $name = $event->getPlayer()->getName();
+        unset($this->container[0]['players'][$name]);
+        if (!isset($this->container[2][$name])) return;
+        unset($this->container[2][$name]);
     }
 }

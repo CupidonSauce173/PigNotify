@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify\task;
 
+
 use Thread;
 use mysqli;
 use Exception;
@@ -11,7 +12,7 @@ use Exception;
 use function str_repeat;
 use function count;
 
-class MySQLThread extends Thread
+class SQLThread extends Thread
 {
     private string $query;
     private array $DBInfo;
@@ -20,12 +21,11 @@ class MySQLThread extends Thread
     # You must prepare the whole query before sending it to the thread.
 
     /**
-     * MySQLThread constructor.
      * @param string $query
      * @param array $DBInfo
-     * @param array $data
+     * @param ?array $data
      */
-    public function __construct(string $query, array $DBInfo, array $data)
+    function __construct(string $query, array $DBInfo, ?array $data)
     {
         $this->query = $query;
         $this->DBInfo = $DBInfo;
@@ -35,17 +35,15 @@ class MySQLThread extends Thread
     /**
      * @throws Exception
      */
-    public function run()
+    function run(): void
     {
         $DBInfo = $this->DBInfo;
         $db = new mysqli();
         $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
         if ($db->connect_error !== null) throw new Exception($db->connect_error);
         $query = $db->prepare($this->query);
-        $data = (array)$this->data;
-        $types = str_repeat('s', count($data));
-        $query->bind_param($types, ...$data);
+        $query->bind_param((string)$this->data['types'], ...(array)$this->data['data']);
         $query->execute();
-        $db->close(); # Close the connection to MySQL.
+        $db->close();
     }
 }

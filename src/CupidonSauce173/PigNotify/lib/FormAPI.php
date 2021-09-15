@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+
 namespace CupidonSauce173\PigNotify\lib;
 
 class FormAPI

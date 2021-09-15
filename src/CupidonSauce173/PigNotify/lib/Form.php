@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+
 namespace CupidonSauce173\PigNotify\lib;
 
 use pocketmine\form\Form as IForm;
@@ -15,7 +16,7 @@ abstract class Form implements IForm
     private $callable;
 
     /**
-     * @param callable $callable
+     * @param callable|null $callable
      */
     public function __construct(?callable $callable)
     {
@@ -41,14 +42,6 @@ abstract class Form implements IForm
     }
 
     /**
-     * @param callable|null $callable
-     */
-    public function setCallable(?callable $callable)
-    {
-        $this->callable = $callable;
-    }
-
-    /**
      * @param Player $player
      * @param mixed $data
      */
@@ -61,11 +54,17 @@ abstract class Form implements IForm
         }
     }
 
+    /**
+     * @param $data
+     */
     public function processData(&$data): void
     {
     }
 
-    public function jsonSerialize()
+    /**
+     * @return array|mixed
+     */
+    public function jsonSerialize(): ?array
     {
         return $this->data;
     }

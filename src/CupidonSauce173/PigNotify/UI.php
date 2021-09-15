@@ -16,10 +16,7 @@ class UI
 {
     private FormAPI $api;
 
-    /**
-     * UI constructor.
-     */
-    public function __construct()
+    function __construct()
     {
         $this->api = new FormAPI();
     }
@@ -27,9 +24,10 @@ class UI
     /**
      * @param Player $player
      */
-    public function MainForm(Player $player): void
+    function MainForm(Player $player): void
     {
         $notifications = NotifLoader::getInstance()->getPlayerNotifications($player->getName());
+        sort($notifications);
         $count = count($notifications);
 
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifications, $count) {
@@ -40,7 +38,7 @@ class UI
                         $this->NotificationList($player, $notifications);
                         break;
                     }
-                    $player->sendMessage(NotifLoader::getInstance()->config['prefix'] . NotifLoader::getInstance()->GetText('message.no.notif'));
+                    $player->sendMessage(NotifLoader::getInstance()->container[1]['prefix'] . NotifLoader::getInstance()->GetText('message.no.notif'));
                     break;
                 case 1:
                     NotifLoader::getInstance()->deleteNotifications($notifications);
@@ -52,7 +50,7 @@ class UI
         $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
         $form->setContent(NotifLoader::getInstance()->GetText('form.content.main'));
         if ($count !== 0) {
-            $form->addButton(str_replace('%count%', $count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
+            $form->addButton(str_replace('%count%', (string)$count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
         } else {
             $form->addButton(NotifLoader::getInstance()->GetText('form.notification.button'), 0, 'textures/ui/Caution');
         }
@@ -65,7 +63,7 @@ class UI
      * @param Player $player
      * @param array $notifList
      */
-    public function NotificationList(Player $player, array $notifList): void
+    function NotificationList(Player $player, array $notifList): void
     {
         $form = $this->api->createSimpleForm(function (Player $player, $data) use ($notifList) {
             if ($data === null) return;
@@ -87,7 +85,7 @@ class UI
      * @param Player $player
      * @param Notification $notification
      */
-    public function SelectedNotification(Player $player, Notification $notification): void
+    function SelectedNotification(Player $player, Notification $notification): void
     {
         $form = $this->api->createSimpleForm(function (Player $player) use ($notification) {
             NotifLoader::getInstance()->deleteNotification($notification);

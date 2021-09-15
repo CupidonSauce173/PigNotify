@@ -1,5 +1,5 @@
 ---
-# MySQL information.
+# MySQL information's.
 MySQL:
   database: notifications
   host: 127.0.0.1
@@ -13,9 +13,6 @@ check-database-task: 3
 check-displayed-task: 2
 # Prefix for the messages.
 prefix: "Notify > "
-
-# Delete all notifications of a user when they leave the server. (RECOMMENDED)
-delete-on-disconnect: true
 
 # Set to false if you don't want to look if the user has the permission to use this command.
 use-permission: false

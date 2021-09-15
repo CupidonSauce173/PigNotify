@@ -2,9 +2,12 @@
 
 declare(strict_types = 1);
 
+
 namespace CupidonSauce173\PigNotify\Object;
 
-class Notification
+use Volatile;
+
+class Notification extends Volatile
 {
     private string $player;
     private bool $displayed;
@@ -13,62 +16,98 @@ class Notification
     private string $event;
     private int $id;
 
-    public function getId(): int
+    /**
+     * @return int
+     */
+    function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id): void
+    /**
+     * @param int $id
+     */
+    function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    public function getPlayer(): string
+    /**
+     * @return string
+     */
+    function getPlayer(): string
     {
         return $this->player;
     }
 
-    public function setPlayer(string $player): void
+    /**
+     * @param string $player
+     */
+    function setPlayer(string $player): void
     {
         $this->player = $player;
     }
 
-    public function hasBeenDisplayed(): bool
+    /**
+     * @return bool
+     */
+    function hasBeenDisplayed(): bool
     {
         return $this->displayed;
     }
 
-    public function setDisplayed(bool $value): void
+    /**
+     * @param bool $value
+     */
+    function setDisplayed(bool $value): void
     {
         $this->displayed = $value;
     }
 
-    public function getLangKey(): string
+    /**
+     * @return string
+     */
+    function getLangKey(): string
     {
         return $this->langKey;
     }
 
-    public function setLangKey(string $key): void
+    /**
+     * @param string $key
+     */
+    function setLangKey(string $key): void
     {
         $this->langKey = $key;
     }
 
-    public function getVarKeys(): array
+    /**
+     * @return array
+     */
+    function getVarKeys(): array
     {
         return $this->varKeys;
     }
 
-    public function setVarKeys(array $keys): void
+    /**
+     * @param array $keys
+     */
+    function setVarKeys(array $keys): void
     {
         $this->varKeys = $keys;
     }
 
-    public function getEvent(): string
+    /**
+     * @return string
+     */
+    function getEvent(): string
     {
         return $this->event;
     }
 
-    public function setEvent(string $event): void
+    /**
+     * @param string $event
+     */
+    function setEvent(string $event): void
     {
         $this->event = $event;
     }

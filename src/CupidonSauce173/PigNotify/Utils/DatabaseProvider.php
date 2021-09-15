@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CupidonSauce173\PigNotify\Utils;
 
+
 use CupidonSauce173\PigNotify\NotifLoader;
 use mysqli;
 
@@ -12,10 +13,7 @@ class DatabaseProvider
     private mysqli $db;
     private array $DBInfo;
 
-    /**
-     * DatabaseProvider constructor.
-     */
-    public function __construct()
+    function __construct()
     {
         $this->DBInfo = NotifLoader::getInstance()->DBInfo;
         $this->db = new mysqli($this->DBInfo['host'], $this->DBInfo['username'], $this->DBInfo['password'], $this->DBInfo['database'], $this->DBInfo['port']);
@@ -28,7 +26,7 @@ class DatabaseProvider
     }
 
     # To create the database structure of the notifications.
-    public function CreateDatabaseStructure(): void
+    function CreateDatabaseStructure(): void
     {
         $this->db->query("CREATE TABLE IF NOT EXISTS notifications(
         id MEDIUMINT NOT NULL AUTO_INCREMENT,

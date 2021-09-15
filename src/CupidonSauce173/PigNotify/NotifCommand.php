@@ -13,18 +13,16 @@ use pocketmine\plugin\Plugin;
 
 class NotifCommand extends Command implements PluginIdentifiableCommand
 {
-    /**
-     * NotifCommand constructor.
-     */
-    public function __construct()
+
+    function __construct()
     {
-        parent::__construct(NotifLoader::getInstance()->config['command-main'],
+        parent::__construct(NotifLoader::getInstance()->container[1]['command-main'],
             NotifLoader::getInstance()->GetText('message.command.description'),
-            '/' . NotifLoader::getInstance()->config['command-main'],
-            NotifLoader::getInstance()->config['command-aliases']
+            '/' . NotifLoader::getInstance()->container[1]['command-main'],
+            (array)NotifLoader::getInstance()->container[1]['command-aliases']
         );
-        if (NotifLoader::getInstance()->config['use-permission']) {
-            $this->setPermission('PigNotify.' . NotifLoader::getInstance()->config['permission']);
+        if (NotifLoader::getInstance()->container[1]['use-permission']) {
+            $this->setPermission('PigNotify.' . NotifLoader::getInstance()->container[1]['permission']);
         }
     }
 
@@ -33,9 +31,9 @@ class NotifCommand extends Command implements PluginIdentifiableCommand
      * @param string $commandLabel
      * @param array $args
      */
-    public function execute(CommandSender $sender, string $commandLabel, array $args): void
+    function execute(CommandSender $sender, string $commandLabel, array $args): void
     {
-        if (NotifLoader::getInstance()->config['use-permission']) {
+        if (NotifLoader::getInstance()->container[1]['use-permission']) {
             if (!$sender->hasPermission($this->getPermission())) {
                 $sender->sendMessage(NotifLoader::getInstance()->GetText('message.no.perm'));
                 return;
@@ -46,7 +44,10 @@ class NotifCommand extends Command implements PluginIdentifiableCommand
         $ui->MainForm($sender);
     }
 
-    public function getPlugin(): Plugin
+    /**
+     * @return Plugin
+     */
+    function getPlugin(): Plugin
     {
         return NotifLoader::getInstance();
     }

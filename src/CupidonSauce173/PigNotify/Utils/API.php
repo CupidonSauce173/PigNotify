@@ -7,7 +7,7 @@ namespace CupidonSauce173\PigNotify\Utils;
 
 use CupidonSauce173\PigNotify\NotifLoader;
 use CupidonSauce173\PigNotify\Object\Notification;
-use CupidonSauce173\PigNotify\task\MySQLThread;
+use CupidonSauce173\PigNotify\task\SQLThread;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
@@ -26,50 +26,54 @@ class API
      * @param string $event
      * @param array|null $varKeys
      */
-    public function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
+    function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
     {
         # Note, varKeys build = array ( 0 => "sender|server", 1 => "sender|friend1" )
         if ($varKeys !== null) {
             $keys = implode(',', $varKeys);
-            $data = [$player->getName(), $langKey, $keys, $event];
+            $data = ['data' => [$player->getName(), $langKey, $keys, $event], 'types' => 'ssss'];
             $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES (?,?,?,?)";
         } else {
-            $data = [$player->getName(), $langKey, $event];
+            $data = ['data' => [$player->getName(), $langKey, $event], 'types' => 'sss'];
             $query = "INSERT INTO notifications (player,langKey,event) VALUES (?,?,?)";
         }
-        $thread = new MySQLThread($query, NotifLoader::getInstance()->DBInfo, $data);
+        $thread = new SQLThread($query, NotifLoader::getInstance()->DBInfo, $data);
         $thread->start();
     }
 
     /**
      * @param Notification $notification
      */
-    public function deleteNotification(Notification $notification): void
+    function deleteNotification(Notification $notification): void
     {
         $id = $notification->getId();
-        $key = array_search($notification, NotifLoader::getInstance()->notificationList[$notification->getPlayer()], true);
+        $key = array_search($notification, (array)NotifLoader::getInstance()->container[2][$notification->getPlayer()], true);
         $user = $notification->getPlayer();
-        unset(NotifLoader::getInstance()->notificationList[$user][$key]);
-        sort(NotifLoader::getInstance()->notificationList[$user]);
-        $thread = new MySQLThread("DELETE FROM notifications WHERE id = ?", NotifLoader::getInstance()->DBInfo, [$id]);
+        unset(NotifLoader::getInstance()->container[2][$user][$key]);
+        $data = ['data' => $id, 'types' => 'i'];
+        $thread = new SQLThread(
+            "DELETE FROM notifications WHERE id = ?",
+            NotifLoader::getInstance()->DBInfo, $data);
         $thread->start();
     }
 
     /**
      * @param array $notificationList
      */
-    public function deleteNotifications(array $notificationList): void
+    function deleteNotifications(array $notificationList): void
     {
         $ids = [];
         /** @var Notification $notif */
         foreach ($notificationList as $notif) {
             $ids[] = $notif->getId();
-            NotifLoader::getInstance()->notificationList[$notif->getPlayer()] = [];
+            NotifLoader::getInstance()->container[2][$notif->getPlayer()] = [];
         }
-        $ids = implode("','", $ids);
-        $thread = new MySQLThread(
-            "DELETE FROM notifications WHERE id IN (?)",
-            NotifLoader::getInstance()->DBInfo, [$ids]);
+        $types = str_repeat('i', count($ids));
+        $data = ['data' => $ids, 'types' => $types];
+        $clauses = implode(',', array_fill(0, count($ids), '?'));
+        $thread = new SQLThread(
+            "DELETE FROM notifications WHERE id IN ($clauses)",
+            NotifLoader::getInstance()->DBInfo, $data);
         $thread->start();
     }
 
@@ -78,7 +82,7 @@ class API
      * @param bool $prefix
      * @return string
      */
-    public function TranslateNotification(Notification $notification, bool $prefix = true): string
+    function TranslateNotification(Notification $notification, bool $prefix = true): string
     {
         $keys = [];
         foreach ($notification->getVarKeys() as $key) {
@@ -98,7 +102,7 @@ class API
                 $message = 'Unknown Index: ' . $key . ' with ' . $value . ' as value.';
             }
         }
-        if($prefix) return NotifLoader::getInstance()->config['prefix'] . TextFormat::RESET . $message;
+        if($prefix) return NotifLoader::getInstance()->container[1]['prefix'] . TextFormat::RESET . $message;
         return $message;
     }
 
@@ -107,7 +111,7 @@ class API
      * @param array|null $LangKey
      * @return string|null
      */
-    public function GetText(string $message, array $LangKey = null): ?string
+    function GetText(string $message, array $LangKey = null): ?string
     {
         if (!isset(NotifLoader::getInstance()->langKeys[$message])) return null;
         $text = NotifLoader::getInstance()->langKeys[$message];
