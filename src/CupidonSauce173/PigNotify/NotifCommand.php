@@ -7,11 +7,10 @@ namespace CupidonSauce173\PigNotify;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 
-class NotifCommand extends Command implements PluginIdentifiableCommand
+class NotifCommand extends Command
 {
 
     function __construct()

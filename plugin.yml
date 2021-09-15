@@ -1,6 +1,6 @@
 name: PigNotify
 main: CupidonSauce173\PigNotify\NotifLoader
 version: 3.0.0
-api: 3.21.0
+api: 4.0.0
 author: CupidonSauce173
 description: MultiThreaded Notifications system using Jojoe's code for the UI.

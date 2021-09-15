@@ -8,7 +8,7 @@ namespace CupidonSauce173\PigNotify\Utils;
 use CupidonSauce173\PigNotify\NotifLoader;
 use CupidonSauce173\PigNotify\Object\Notification;
 use CupidonSauce173\PigNotify\task\SQLThread;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 use function array_search;

@@ -11,10 +11,8 @@ use pocketmine\scheduler\Task;
 
 class DispatchNotifications extends Task
 {
-    /**
-     * @param int $currentTick
-     */
-    function onRun(int $currentTick): void
+
+    function onRun(): void
     {
         foreach (NotifLoader::getInstance()->getServer()->getOnlinePlayers() as $player) {
             if (!isset(NotifLoader::getInstance()->container[2][$player->getName()])) return;

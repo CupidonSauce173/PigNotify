@@ -7,8 +7,8 @@ namespace CupidonSauce173\PigNotify;
 
 use CupidonSauce173\PigNotify\lib\FormAPI;
 use CupidonSauce173\PigNotify\Object\Notification;
-use pocketmine\Player;
 
+use pocketmine\player\Player;
 use function count;
 use function str_replace;
 
