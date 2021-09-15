@@ -113,12 +113,12 @@ class NotifLoader extends PluginBase implements Listener
 
     /**
      * @param string $player
-     * @return array|null
+     * @return array
      */
-    function getPlayerNotifications(string $player): ?array
+    function getPlayerNotifications(string $player): array
     {
-        if (!isset($this->container[2][$player])) return null;
-        return $this->container[2][$player];
+        if (!isset($this->container[2][$player])) return [];
+        return (array)$this->container[2][$player];
     }
 
     /**

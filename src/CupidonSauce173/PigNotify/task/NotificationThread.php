@@ -21,7 +21,7 @@ use function strlen;
 class NotificationThread extends Thread
 {
     private array $DBInfo;
-    private array $idList;
+    private array $idList = [];
     private string $idClause;
     private string $idTypes;
 
@@ -35,7 +35,6 @@ class NotificationThread extends Thread
     {
         $this->DBInfo = $DBInfo;
         $this->container = $container;
-        $this->idList = [];
     }
 
     /**
@@ -101,7 +100,7 @@ class NotificationThread extends Thread
             $idClause = $this->idClause;
             $this->idTypes = str_repeat('i', count($this->idList));
 
-            if ($this->idList === null) return;
+            if (empty($this->idList)) return;
             # Gets a list of already existing notification to create a smaller and more optimized query.
             $data = array_merge((array)$this->container[0]['players'], (array)$this->idList);
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause) AND id NOT IN ($idClause)");

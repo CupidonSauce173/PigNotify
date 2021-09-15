@@ -42,6 +42,7 @@ class SQLThread extends Thread
         $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
         if ($db->connect_error !== null) throw new Exception($db->connect_error);
         $query = $db->prepare($this->query);
+        if($query === false) return;
         $query->bind_param((string)$this->data['types'], ...(array)$this->data['data']);
         $query->execute();
         $db->close();

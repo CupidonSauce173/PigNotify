@@ -54,16 +54,11 @@ abstract class Form implements IForm
         }
     }
 
-    /**
-     * @param $data
-     */
     public function processData(&$data): void
     {
+
     }
 
-    /**
-     * @return array|mixed
-     */
     public function jsonSerialize(): ?array
     {
         return $this->data;
