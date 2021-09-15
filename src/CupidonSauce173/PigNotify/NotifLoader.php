@@ -159,6 +159,9 @@ class NotifLoader extends PluginBase implements Listener
 
     # Events Section
 
+    /**
+     * @param PlayerJoinEvent $event
+     */
     function onJoin(PlayerJoinEvent $event): void
     {
         $this->container[0]['players'][] = $event->getPlayer()->getName();

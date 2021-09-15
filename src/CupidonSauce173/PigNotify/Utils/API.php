@@ -16,7 +16,6 @@ use function implode;
 use function explode;
 use function strpos;
 use function str_replace;
-use function sort;
 
 class API
 {
@@ -102,7 +101,7 @@ class API
                 $message = 'Unknown Index: ' . $key . ' with ' . $value . ' as value.';
             }
         }
-        if($prefix) return NotifLoader::getInstance()->container[1]['prefix'] . TextFormat::RESET . $message;
+        if ($prefix) return NotifLoader::getInstance()->container[1]['prefix'] . TextFormat::RESET . $message;
         return $message;
     }
 

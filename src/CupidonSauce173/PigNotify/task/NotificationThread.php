@@ -16,6 +16,7 @@ use function count;
 use function array_merge;
 use function str_repeat;
 use function array_fill;
+use function strlen;
 
 class NotificationThread extends Thread
 {
@@ -76,7 +77,7 @@ class NotificationThread extends Thread
         $types = str_repeat('s', count((array)$this->container[0]['players']));
 
         $i = 0;
-        foreach ((array)$this->container[2] as $notifications){
+        foreach ((array)$this->container[2] as $notifications) {
             $i = $i + count($notifications);
         }
 
@@ -86,10 +87,10 @@ class NotificationThread extends Thread
         } else {
             # Creates id list array.
             foreach ((array)$this->container[0]['players'] as $player) {
-                if(!isset($this->container[2][$player])) return;
+                if (!isset($this->container[2][$player])) return;
                 foreach ($this->container[2][$player] as $notification) {
-                    if($notification instanceof Notification){
-                        if(array_search($notification->getId(), (array)$this->idList) === false){
+                    if ($notification instanceof Notification) {
+                        if (array_search($notification->getId(), (array)$this->idList) === false) {
                             $this->idList[] = $notification->getId();
                         }
                     }
@@ -100,7 +101,7 @@ class NotificationThread extends Thread
             $idClause = $this->idClause;
             $this->idTypes = str_repeat('i', count($this->idList));
 
-            if($this->idList === null) return;
+            if ($this->idList === null) return;
             # Gets a list of already existing notification to create a smaller and more optimized query.
             $data = array_merge((array)$this->container[0]['players'], (array)$this->idList);
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause) AND id NOT IN ($idClause)");
@@ -127,7 +128,7 @@ class NotificationThread extends Thread
         # Sets every existing notifications display column to 0 since they have been displayed for sure.
         if ($this->idClause !== null) {
             $idClause = $this->idClause;
-            if(strlen($this->idTypes) === count((array)$this->idList)) {
+            if (strlen($this->idTypes) === count((array)$this->idList)) {
                 $update = $db->prepare("UPDATE notifications SET displayed = TRUE WHERE id IN ($idClause)");
                 $update->bind_param($this->idTypes, ...(array)$this->idList);
                 $update->execute();
@@ -135,9 +136,9 @@ class NotificationThread extends Thread
         }
         $db->close();
         foreach ($notifications as $notification) {
-            foreach($notification as $item){
+            foreach ($notification as $item) {
                 # Check if player found in the container.
-                if(!isset($this->container[2][$item['player']])){
+                if (!isset($this->container[2][$item['player']])) {
                     $this->container[2][$item['player']] = [];
                 }
                 $notifClass = new Notification();
