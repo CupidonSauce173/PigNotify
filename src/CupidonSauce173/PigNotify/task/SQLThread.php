@@ -1,34 +1,31 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify\task;
 
 
-use Thread;
-use mysqli;
 use Exception;
-
-use function str_repeat;
-use function count;
+use mysqli;
+use Thread;
 
 class SQLThread extends Thread
 {
     private string $query;
-    private array $DBInfo;
+    private array $dbInfo;
     private array $data;
 
     # You must prepare the whole query before sending it to the thread.
 
     /**
      * @param string $query
-     * @param array $DBInfo
+     * @param array $dbInfo
      * @param ?array $data
      */
-    function __construct(string $query, array $DBInfo, ?array $data)
+    function __construct(string $query, array $dbInfo, ?array $data)
     {
         $this->query = $query;
-        $this->DBInfo = $DBInfo;
+        $this->dbInfo = $dbInfo;
         $this->data = $data;
     }
 
@@ -37,12 +34,12 @@ class SQLThread extends Thread
      */
     function run(): void
     {
-        $DBInfo = $this->DBInfo;
+        $dbInfo = $this->dbInfo;
         $db = new mysqli();
-        $db->connect($DBInfo['host'], $DBInfo['username'], $DBInfo['password'], $DBInfo['database'], $DBInfo['port']);
+        $db->connect($dbInfo['host'], $dbInfo['username'], $dbInfo['password'], $dbInfo['database'], $dbInfo['port']);
         if ($db->connect_error !== null) throw new Exception($db->connect_error);
         $query = $db->prepare($this->query);
-        if($query === false) return;
+        if ($query === false) return;
         $query->bind_param((string)$this->data['types'], ...(array)$this->data['data']);
         $query->execute();
         $db->close();

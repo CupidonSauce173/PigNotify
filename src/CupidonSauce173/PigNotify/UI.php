@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify;
 
@@ -8,8 +8,8 @@ namespace CupidonSauce173\PigNotify;
 use CupidonSauce173\PigNotify\lib\FormAPI;
 use CupidonSauce173\PigNotify\Object\Notification;
 use pocketmine\Player;
-
 use function count;
+use function sort;
 use function str_replace;
 
 class UI
@@ -26,7 +26,7 @@ class UI
      */
     function MainForm(Player $player): void
     {
-        $notifications = NotifLoader::getInstance()->getPlayerNotifications($player->getName());
+        $notifications = PigNotify::getInstance()->getPlayerNotifications($player->getName());
         sort($notifications);
         $count = count($notifications);
 
@@ -38,24 +38,24 @@ class UI
                         $this->NotificationList($player, $notifications);
                         break;
                     }
-                    $player->sendMessage(NotifLoader::getInstance()->container[1]['prefix'] . NotifLoader::getInstance()->GetText('message.no.notif'));
+                    $player->sendMessage(PigNotify::getInstance()->container[1]['prefix'] . PigNotify::getInstance()->getText('message.no.notif'));
                     break;
                 case 1:
-                    NotifLoader::getInstance()->deleteNotifications($notifications);
+                    PigNotify::getInstance()->deleteNotifications($notifications);
                     break;
                 case 2:
                     break;
             }
         });
-        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
-        $form->setContent(NotifLoader::getInstance()->GetText('form.content.main'));
+        $form->setTitle(PigNotify::getInstance()->getText('form.title'));
+        $form->setContent(PigNotify::getInstance()->getText('form.content.main'));
         if ($count !== 0) {
-            $form->addButton(str_replace('%count%', (string)$count, NotifLoader::getInstance()->GetText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
+            $form->addButton(str_replace('%count%', (string)$count, PigNotify::getInstance()->getText('form.notifications.button')), 0, 'textures/ui/ErrorGlyph');
         } else {
-            $form->addButton(NotifLoader::getInstance()->GetText('form.notification.button'), 0, 'textures/ui/Caution');
+            $form->addButton(PigNotify::getInstance()->getText('form.notification.button'), 0, 'textures/ui/Caution');
         }
-        $form->addButton(NotifLoader::getInstance()->GetText('form.clearAll.button'));
-        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
+        $form->addButton(PigNotify::getInstance()->getText('form.clearAll.button'));
+        $form->addButton(PigNotify::getInstance()->getText('form.close.button'));
         $form->sendToPlayer($player);
     }
 
@@ -71,13 +71,13 @@ class UI
             if ((int)$data === $count) return;
             $this->SelectedNotification($player, $notifList[$data]);
         });
-        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
-        $form->setContent(NotifLoader::getInstance()->GetText('form.content.list'));
+        $form->setTitle(PigNotify::getInstance()->getText('form.title'));
+        $form->setContent(PigNotify::getInstance()->getText('form.content.list'));
         /** @var Notification $notification */
         foreach ($notifList as $notification) {
-            $form->addButton(NotifLoader::getInstance()->TranslateNotification($notification, false));
+            $form->addButton(PigNotify::getInstance()->translateNotification($notification, false));
         }
-        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
+        $form->addButton(PigNotify::getInstance()->getText('form.close.button'));
         $form->sendToPlayer($player);
     }
 
@@ -88,16 +88,16 @@ class UI
     function SelectedNotification(Player $player, Notification $notification): void
     {
         $form = $this->api->createSimpleForm(function (Player $player) use ($notification) {
-            NotifLoader::getInstance()->deleteNotification($notification);
+            PigNotify::getInstance()->deleteNotification($notification);
             $this->MainForm($player);
         });
-        $form->setTitle(NotifLoader::getInstance()->GetText('form.title'));
+        $form->setTitle(PigNotify::getInstance()->getText('form.title'));
         $form->setContent(
-            NotifLoader::getInstance()->TranslateNotification($notification) .
+            PigNotify::getInstance()->translateNotification($notification) .
             PHP_EOL .
-            NotifLoader::getInstance()->GetText('form.warn.notif')
+            PigNotify::getInstance()->getText('form.warn.notif')
         );
-        $form->addButton(NotifLoader::getInstance()->GetText('form.close.button'));
+        $form->addButton(PigNotify::getInstance()->getText('form.close.button'));
         $form->sendToPlayer($player);
     }
 }

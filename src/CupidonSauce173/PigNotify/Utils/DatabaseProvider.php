@@ -1,26 +1,25 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify\Utils;
 
 
-use CupidonSauce173\PigNotify\NotifLoader;
+use CupidonSauce173\PigNotify\PigNotify;
 use mysqli;
 
 class DatabaseProvider
 {
     private mysqli $db;
-    private array $DBInfo;
 
     function __construct()
     {
-        $this->DBInfo = NotifLoader::getInstance()->DBInfo;
-        $this->db = new mysqli($this->DBInfo['host'], $this->DBInfo['username'], $this->DBInfo['password'], $this->DBInfo['database'], $this->DBInfo['port']);
+        $dbInfo = PigNotify::getInstance()->dbInfo;
+        $this->db = new mysqli($dbInfo['host'], $dbInfo['username'], $dbInfo['password'], $dbInfo['database'], $dbInfo['port']);
         if ($this->db->connect_error) {
-            NotifLoader::getInstance()->getLogger()->error('Failed to connect to the MySQL database: ' . $this->db->connect_error);
+            PigNotify::getInstance()->getLogger()->error('Failed to connect to the MySQL database: ' . $this->db->connect_error);
             $this->db->close();
-            NotifLoader::getInstance()->getServer()->shutdown();
+            PigNotify::getInstance()->getServer()->shutdown();
         }
         $this->CreateDatabaseStructure();
     }

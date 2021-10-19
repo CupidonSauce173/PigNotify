@@ -1,26 +1,25 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify\task;
 
 
 use CupidonSauce173\PigNotify\Object\Notification;
-use Thread;
-use mysqli;
 use Exception;
+use mysqli;
+use Thread;
 use Volatile;
-
-use function implode;
-use function count;
-use function array_merge;
-use function str_repeat;
 use function array_fill;
+use function array_merge;
+use function count;
+use function implode;
+use function str_repeat;
 use function strlen;
 
 class NotificationThread extends Thread
 {
-    private array $DBInfo;
+    private array $dbInfo;
     private array $idList = [];
     private string $idClause;
     private string $idTypes;
@@ -28,12 +27,12 @@ class NotificationThread extends Thread
     public Volatile $container;
 
     /**
-     * @param array $DBInfo
+     * @param array $dbInfo
      * @param Volatile $container
      */
-    function __construct(array $DBInfo, Volatile $container)
+    function __construct(array $dbInfo, Volatile $container)
     {
-        $this->DBInfo = $DBInfo;
+        $this->dbInfo = $dbInfo;
         $this->container = $container;
     }
 
@@ -63,11 +62,11 @@ class NotificationThread extends Thread
         # Preparing MySQLi connection.
         $db = new mysqli();
         $db->connect(
-            $this->DBInfo['host'],
-            $this->DBInfo['username'],
-            $this->DBInfo['password'],
-            $this->DBInfo['database'],
-            $this->DBInfo['port']
+            $this->dbInfo['host'],
+            $this->dbInfo['username'],
+            $this->dbInfo['password'],
+            $this->dbInfo['database'],
+            $this->dbInfo['port']
         );
         if ($db->connect_error !== null) throw new Exception($db->connect_error);
 
@@ -89,7 +88,7 @@ class NotificationThread extends Thread
                 if (!isset($this->container[2][$player])) return;
                 foreach ($this->container[2][$player] as $notification) {
                     if ($notification instanceof Notification) {
-                        if (array_search($notification->getId(), (array)$this->idList) === false) {
+                        if (array_search($notification->getId(), $this->idList) === false) {
                             $this->idList[] = $notification->getId();
                         }
                     }
@@ -102,7 +101,7 @@ class NotificationThread extends Thread
 
             if (empty($this->idList)) return;
             # Gets a list of already existing notification to create a smaller and more optimized query.
-            $data = array_merge((array)$this->container[0]['players'], (array)$this->idList);
+            $data = array_merge((array)$this->container[0]['players'], $this->idList);
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause) AND id NOT IN ($idClause)");
             $stmt->bind_param($types . $this->idTypes, ...$data);
         }
@@ -127,9 +126,9 @@ class NotificationThread extends Thread
         # Sets every existing notifications display column to 0 since they have been displayed for sure.
         if ($this->idClause !== null) {
             $idClause = $this->idClause;
-            if (strlen($this->idTypes) === count((array)$this->idList)) {
+            if (strlen($this->idTypes) === count($this->idList)) {
                 $update = $db->prepare("UPDATE notifications SET displayed = TRUE WHERE id IN ($idClause)");
-                $update->bind_param($this->idTypes, ...(array)$this->idList);
+                $update->bind_param($this->idTypes, ...$this->idList);
                 $update->execute();
             }
         }

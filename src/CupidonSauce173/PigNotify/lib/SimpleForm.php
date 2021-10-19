@@ -1,9 +1,11 @@
 <?php
 
-declare(strict_types = 1);
-
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify\lib;
+
+
+use function count;
 
 class SimpleForm extends Form
 {

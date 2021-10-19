@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify;
 
@@ -15,28 +15,27 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
-
 use Thread;
 use Volatile;
-
-use function explode;
-use function file_exists;
 use function array_map;
+use function file_exists;
 use function parse_ini_file;
+use function preg_match;
 
-class NotifLoader extends PluginBase implements Listener
+class PigNotify extends PluginBase implements Listener
 {
     private API $api;
 
-    public array $DBInfo;
+    public array $dbInfo;
     public array $langKeys;
 
-    static NotifLoader $instance;
+    static PigNotify $instance;
 
     public Thread $thread;
     public Volatile $container;
+
+    # Server Events Field
 
     function onEnable(): void
     {
@@ -48,9 +47,29 @@ class NotifLoader extends PluginBase implements Listener
             $this->saveResource('langKeys.ini');
         }
 
+        self::iniThreadField();
+
+        $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
+        $this->api = new API();
+        $this->dbInfo = (array)$this->container[1]['MySQL'];
+
+        if (preg_match('/[^A-Za-z-.]/', $this->container[1]['permission'])) {
+            $this->getLogger()->error('Wrong permission setting. Please do not put any special characters.');
+            $this->getServer()->shutdown();
+        }
+
+        new DatabaseProvider();
+
+        $this->getScheduler()->scheduleRepeatingTask(new DispatchNotifications(), $this->container[1]['check-displayed-task'] * 20);
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $this->getServer()->getCommandMap()->register('PigNotify', new Commands());
+    }
+
+    private function iniThreadField(): void
+    {
         $config = new Config($this->getDataFolder() . 'config.yml', Config::YAML);
 
-        # Preparing the volatile container
+        # Prepare & Populate container.
         $this->container = new Volatile();
         $this->container[0] = [];
         $this->container[0]['players'] = [];
@@ -59,23 +78,9 @@ class NotifLoader extends PluginBase implements Listener
         $this->container[2] = []; # Contains all notification objects
         $this->container[3] = true;
 
-        $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
-        $this->api = new API();
-        $this->DBInfo = (array)$this->container[1]['MySQL'];
-        if (preg_match('/[^A-Za-z-.]/', $this->container[1]['permission'])) {
-            $this->getLogger()->error('Wrong permission setting. Please do not put any special characters.');
-            $this->getServer()->shutdown();
-        }
-
-        new DatabaseProvider();
-
         # Prepare & start thread.
-        $this->thread = new NotificationThread($this->DBInfo, $this->container);
+        $this->thread = new NotificationThread($this->dbInfo, $this->container);
         $this->thread->start();
-
-        $this->getScheduler()->scheduleRepeatingTask(new DispatchNotifications(), $this->container[1]['check-displayed-task'] * 20);
-        $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->getServer()->getCommandMap()->register('PigNotify', new NotifCommand());
     }
 
 
@@ -86,7 +91,7 @@ class NotifLoader extends PluginBase implements Listener
     }
 
     /**
-     * @return NotifLoader
+     * @return PigNotify
      */
     static function getInstance(): self
     {
@@ -98,9 +103,10 @@ class NotifLoader extends PluginBase implements Listener
         self::$instance = $this;
     }
 
-    # API Section
+    # API Field
 
     /**
+     * Create a new notification for a player.
      * @param Player $player
      * @param string $langKey
      * @param string $event
@@ -112,6 +118,7 @@ class NotifLoader extends PluginBase implements Listener
     }
 
     /**
+     * Get all notifications of a player by username.
      * @param string $player
      * @return array
      */
@@ -122,6 +129,7 @@ class NotifLoader extends PluginBase implements Listener
     }
 
     /**
+     * Delete a specific notification. Must supply a notification object.
      * @param Notification $notification
      */
     function deleteNotification(Notification $notification): void
@@ -130,34 +138,37 @@ class NotifLoader extends PluginBase implements Listener
     }
 
     /**
-     * @param array $toDelete
+     * Delete a list of notifications, must supply an array of notifications.
+     * @param array $list
      */
-    function deleteNotifications(array $toDelete): void
+    function deleteNotifications(array $list): void
     {
-        $this->api->deleteNotifications($toDelete);
+        $this->api->deleteNotifications($list);
     }
 
     /**
+     * Get the text of a key from the langKeys.ini file.
      * @param string $messageKey
-     * @param array|null $LangKeys
+     * @param array|null $langKeys
      * @return string|null
      */
-    function GetText(string $messageKey, array $LangKeys = null): ?string
+    function getText(string $messageKey, array $langKeys = null): ?string
     {
-        return $this->api->GetText($messageKey, $LangKeys);
+        return $this->api->getText($messageKey, $langKeys);
     }
 
     /**
+     * Translate a notification to a readable message for the players.
      * @param Notification $notification
      * @param bool $prefix
      * @return string
      */
-    function TranslateNotification(Notification $notification, bool $prefix = true): string
+    function translateNotification(Notification $notification, bool $prefix = true): string
     {
-        return $this->api->TranslateNotification($notification, $prefix);
+        return $this->api->translateNotification($notification, $prefix);
     }
 
-    # Events Section
+    # Events Field
 
     /**
      * @param PlayerJoinEvent $event
