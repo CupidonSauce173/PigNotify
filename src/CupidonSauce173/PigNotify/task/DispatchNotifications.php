@@ -17,9 +17,9 @@ class DispatchNotifications extends Task
     function onRun(int $currentTick): void
     {
         foreach (PigNotify::getInstance()->getServer()->getOnlinePlayers() as $player) {
-            if (!isset(PigNotify::getInstance()->container[2][$player->getName()])) return;
+            if (!isset(PigNotify::getInstance()->container['notifications'][$player->getName()])) return;
             /** @var Notification $notification */
-            foreach (PigNotify::getInstance()->container[2][$player->getName()] as $notification) {
+            foreach (PigNotify::getInstance()->container['notifications'][$player->getName()] as $notification) {
                 if ($notification->hasBeenDisplayed() !== true) {
                     $player = PigNotify::getInstance()->getServer()->getPlayer($notification->getPlayer());
                     $player->sendMessage(PigNotify::getInstance()->translateNotification($notification));

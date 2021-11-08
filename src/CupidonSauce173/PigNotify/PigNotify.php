@@ -25,17 +25,22 @@ use function preg_match;
 
 class PigNotify extends PluginBase implements Listener
 {
-    private API $api;
-
+    static PigNotify $instance;
     public array $dbInfo;
     public array $langKeys;
-
-    static PigNotify $instance;
-
     public Thread $thread;
     public Volatile $container;
+    private API $api;
 
     # Server Events Field
+
+    /**
+     * @return PigNotify
+     */
+    static function getInstance(): self
+    {
+        return self::$instance;
+    }
 
     function onEnable(): void
     {
@@ -51,16 +56,16 @@ class PigNotify extends PluginBase implements Listener
 
         $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
         $this->api = new API();
-        $this->dbInfo = (array)$this->container[1]['MySQL'];
+        $this->dbInfo = (array)$this->container['config']['MySQL'];
 
-        if (preg_match('/[^A-Za-z-.]/', $this->container[1]['permission'])) {
+        if (preg_match('/[^A-Za-z-.]/', $this->container['config']['permission'])) {
             $this->getLogger()->error('Wrong permission setting. Please do not put any special characters.');
             $this->getServer()->shutdown();
         }
 
-        new DatabaseProvider();
+        new DatabaseProvider($this->dbInfo);
 
-        $this->getScheduler()->scheduleRepeatingTask(new DispatchNotifications(), $this->container[1]['check-displayed-task'] * 20);
+        $this->getScheduler()->scheduleRepeatingTask(new DispatchNotifications(), $this->container['config']['check-displayed-task'] * 20);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getCommandMap()->register('PigNotify', new Commands());
     }
@@ -71,31 +76,21 @@ class PigNotify extends PluginBase implements Listener
 
         # Prepare & Populate container.
         $this->container = new Volatile();
-        $this->container[0] = [];
-        $this->container[0]['players'] = [];
-        $this->container[0]['folder'] = __DIR__;
-        $this->container[1] = $config->getAll();
-        $this->container[2] = []; # Contains all notification objects
-        $this->container[3] = true;
+        $this->container['players'] = [];
+        $this->container['folder'] = __DIR__;
+        $this->container['config'] = $config->getAll();
+        $this->container['notifications'] = []; # Contains all notification objects
+        $this->container['runThread'] = true;
 
         # Prepare & start thread.
         $this->thread = new NotificationThread($this->dbInfo, $this->container);
         $this->thread->start();
     }
 
-
     function onDisable(): void
     {
         # Stopping the NotificationThread
-        $this->container[3] = false;
-    }
-
-    /**
-     * @return PigNotify
-     */
-    static function getInstance(): self
-    {
-        return self::$instance;
+        $this->container['runThread'] = false;
     }
 
     function onLoad(): void
@@ -124,8 +119,8 @@ class PigNotify extends PluginBase implements Listener
      */
     function getPlayerNotifications(string $player): array
     {
-        if (!isset($this->container[2][$player])) return [];
-        return (array)$this->container[2][$player];
+        if (!isset($this->container['notifications'][$player])) return [];
+        return (array)$this->container['notifications'][$player];
     }
 
     /**
@@ -175,7 +170,7 @@ class PigNotify extends PluginBase implements Listener
      */
     function onJoin(PlayerJoinEvent $event): void
     {
-        $this->container[0]['players'][] = $event->getPlayer()->getName();
+        $this->container['players'][] = $event->getPlayer()->getName();
     }
 
     /**
@@ -184,8 +179,8 @@ class PigNotify extends PluginBase implements Listener
     function onLeave(PlayerQuitEvent $event): void
     {
         $name = $event->getPlayer()->getName();
-        unset($this->container[0]['players'][$name]);
-        if (!isset($this->container[2][$name])) return;
-        unset($this->container[2][$name]);
+        unset($this->container['players'][$name]);
+        if (!isset($this->container['notifications'][$name])) return;
+        unset($this->container['notifications'][$name]);
     }
 }

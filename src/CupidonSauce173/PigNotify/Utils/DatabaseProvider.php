@@ -6,28 +6,37 @@ namespace CupidonSauce173\PigNotify\Utils;
 
 
 use CupidonSauce173\PigNotify\PigNotify;
-use mysqli;
+use function mysqli_connect;
 
 class DatabaseProvider
 {
-    private mysqli $db;
 
-    function __construct()
+    function __construct(array $sqlInfo)
     {
-        $dbInfo = PigNotify::getInstance()->dbInfo;
-        $this->db = new mysqli($dbInfo['host'], $dbInfo['username'], $dbInfo['password'], $dbInfo['database'], $dbInfo['port']);
-        if ($this->db->connect_error) {
-            PigNotify::getInstance()->getLogger()->error('Failed to connect to the MySQL database: ' . $this->db->connect_error);
-            $this->db->close();
-            PigNotify::getInstance()->getServer()->shutdown();
-        }
-        $this->CreateDatabaseStructure();
+
+        $this->CreateDatabaseStructure($sqlInfo);
     }
 
     # To create the database structure of the notifications.
-    function CreateDatabaseStructure(): void
+    function CreateDatabaseStructure(array $sqlInfo): void
     {
-        $this->db->query("CREATE TABLE IF NOT EXISTS notifications(
+        $link = mysqli_connect(
+            $sqlInfo['ip'],
+            $sqlInfo['user'],
+            $sqlInfo['password'],
+            null,
+            $sqlInfo['port']
+        );
+        if ($link->connect_error) {
+            PigNotify::getInstance()->getLogger()->error($link->connect_error);
+            PigNotify::getInstance()->getServer()->shutdown();
+        }
+        $s_db = $link->select_db($sqlInfo['database']);
+        if (!$s_db) {
+            $link->query('CREATE DATABASE ' . $sqlInfo['database']);
+            PigNotify::getInstance()->getLogger()->warning('PigNotify: Created database -> ' . $sqlInfo['database']);
+        }
+        $link->query("CREATE TABLE IF NOT EXISTS notifications(
         id MEDIUMINT NOT NULL AUTO_INCREMENT,
         displayed TINYINT(1) NOT NULL DEFAULT FALSE,
         player VARCHAR(15) NOT NULL,
@@ -36,6 +45,6 @@ class DatabaseProvider
         event VARCHAR(255) NOT NULL,
         PRIMARY KEY (id)
         )");
-        $this->db->close();
+        $link->close();
     }
 }

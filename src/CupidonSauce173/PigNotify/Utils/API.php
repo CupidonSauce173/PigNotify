@@ -48,9 +48,9 @@ class API
     function deleteNotification(Notification $notification): void
     {
         $id = $notification->getId();
-        $key = array_search($notification, (array)PigNotify::getInstance()->container[2][$notification->getPlayer()], true);
+        $key = array_search($notification, (array)PigNotify::getInstance()->container['notifications'][$notification->getPlayer()], true);
         $user = $notification->getPlayer();
-        unset(PigNotify::getInstance()->container[2][$user][$key]);
+        unset(PigNotify::getInstance()->container['notifications'][$user][$key]);
         $data = ['data' => $id, 'types' => 'i'];
         $thread = new SQLThread(
             "DELETE FROM notifications WHERE id = ?",
@@ -67,7 +67,7 @@ class API
         /** @var Notification $notif */
         foreach ($notificationList as $notif) {
             $ids[] = $notif->getId();
-            PigNotify::getInstance()->container[2][$notif->getPlayer()] = [];
+            PigNotify::getInstance()->container['notifications'][$notif->getPlayer()] = [];
         }
         $types = str_repeat('i', count($ids));
         $data = ['data' => $ids, 'types' => $types];
@@ -103,7 +103,7 @@ class API
                 $message = 'Unknown Index: ' . $key . ' with ' . $value . ' as value.';
             }
         }
-        if ($prefix) return PigNotify::getInstance()->container[1]['prefix'] . TextFormat::RESET . $message;
+        if ($prefix) return PigNotify::getInstance()->container['config']['prefix'] . TextFormat::RESET . $message;
         return $message;
     }
 

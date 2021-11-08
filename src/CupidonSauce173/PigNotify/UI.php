@@ -38,7 +38,7 @@ class UI
                         $this->NotificationList($player, $notifications);
                         break;
                     }
-                    $player->sendMessage(PigNotify::getInstance()->container[1]['prefix'] . PigNotify::getInstance()->getText('message.no.notif'));
+                    $player->sendMessage(PigNotify::getInstance()->container['config']['prefix'] . PigNotify::getInstance()->getText('message.no.notif'));
                     break;
                 case 1:
                     PigNotify::getInstance()->deleteNotifications($notifications);

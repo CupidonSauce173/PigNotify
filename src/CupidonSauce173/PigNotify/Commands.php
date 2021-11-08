@@ -16,13 +16,13 @@ class Commands extends Command implements PluginIdentifiableCommand
 
     function __construct()
     {
-        parent::__construct(PigNotify::getInstance()->container[1]['command-main'],
+        parent::__construct(PigNotify::getInstance()->container['config']['command-main'],
             PigNotify::getInstance()->getText('message.command.description'),
-            '/' . PigNotify::getInstance()->container[1]['command-main'],
-            (array)PigNotify::getInstance()->container[1]['command-aliases']
+            '/' . PigNotify::getInstance()->container['config']['command-main'],
+            (array)PigNotify::getInstance()->container['config']['command-aliases']
         );
-        if (PigNotify::getInstance()->container[1]['use-permission']) {
-            $this->setPermission('PigNotify.' . PigNotify::getInstance()->container[1]['permission']);
+        if (PigNotify::getInstance()->container['config']['use-permission']) {
+            $this->setPermission('PigNotify.' . PigNotify::getInstance()->container['config']['permission']);
         }
     }
 
@@ -33,7 +33,7 @@ class Commands extends Command implements PluginIdentifiableCommand
      */
     function execute(CommandSender $sender, string $commandLabel, array $args): void
     {
-        if (PigNotify::getInstance()->container[1]['use-permission']) {
+        if (PigNotify::getInstance()->container['config']['use-permission']) {
             if (!$sender->hasPermission($this->getPermission())) {
                 $sender->sendMessage(PigNotify::getInstance()->getText('message.no.perm'));
                 return;

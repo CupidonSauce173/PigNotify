@@ -19,12 +19,11 @@ use function strlen;
 
 class NotificationThread extends Thread
 {
+    public Volatile $container;
     private array $dbInfo;
     private array $idList = [];
     private string $idClause;
     private string $idTypes;
-
-    public Volatile $container;
 
     /**
      * @param array $dbInfo
@@ -41,14 +40,14 @@ class NotificationThread extends Thread
      */
     function run(): void
     {
-        $nextTime = microtime(true) + $this->container[1]['check-database-task'];
+        $nextTime = microtime(true) + $this->container['config']['check-database-task'];
 
-        include($this->container[0]['folder'] . '\Object\Notification.php');
+        include($this->container['folder'] . '\Object\Notification.php');
 
-        while ($this->container[3]) {
+        while ($this->container['runThread']) {
             if (microtime(true) >= $nextTime) {
                 $this->ProcessThread();
-                $nextTime = microtime(true) + $this->container[1]['check-database-task'];
+                $nextTime = microtime(true) + $this->container['config']['check-database-task'];
             }
         }
     }
@@ -58,7 +57,7 @@ class NotificationThread extends Thread
      */
     function ProcessThread(): void
     {
-        if (count((array)$this->container[0]['players']) === 0) return;
+        if (count((array)$this->container['players']) === 0) return;
         # Preparing MySQLi connection.
         $db = new mysqli();
         $db->connect(
@@ -71,22 +70,22 @@ class NotificationThread extends Thread
         if ($db->connect_error !== null) throw new Exception($db->connect_error);
 
         # Creates player param and data.
-        $clause = implode(',', array_fill(0, count((array)$this->container[0]['players']), '?'));
-        $types = str_repeat('s', count((array)$this->container[0]['players']));
+        $clause = implode(',', array_fill(0, count((array)$this->container['players']), '?'));
+        $types = str_repeat('s', count((array)$this->container['players']));
 
         $i = 0;
-        foreach ((array)$this->container[2] as $notifications) {
+        foreach ((array)$this->container['notifications'] as $notifications) {
             $i = $i + count($notifications);
         }
 
         if ($i === 0) {
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause)");
-            $stmt->bind_param($types, ...(array)$this->container[0]['players']);
+            $stmt->bind_param($types, ...(array)$this->container['players']);
         } else {
             # Creates id list array.
-            foreach ((array)$this->container[0]['players'] as $player) {
-                if (!isset($this->container[2][$player])) return;
-                foreach ($this->container[2][$player] as $notification) {
+            foreach ((array)$this->container['players'] as $player) {
+                if (!isset($this->container['notifications'][$player])) return;
+                foreach ($this->container['notifications'][$player] as $notification) {
                     if ($notification instanceof Notification) {
                         if (array_search($notification->getId(), $this->idList) === false) {
                             $this->idList[] = $notification->getId();
@@ -101,7 +100,7 @@ class NotificationThread extends Thread
 
             if (empty($this->idList)) return;
             # Gets a list of already existing notification to create a smaller and more optimized query.
-            $data = array_merge((array)$this->container[0]['players'], $this->idList);
+            $data = array_merge((array)$this->container['players'], $this->idList);
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause) AND id NOT IN ($idClause)");
             $stmt->bind_param($types . $this->idTypes, ...$data);
         }
@@ -136,8 +135,8 @@ class NotificationThread extends Thread
         foreach ($notifications as $notification) {
             foreach ($notification as $item) {
                 # Check if player found in the container.
-                if (!isset($this->container[2][$item['player']])) {
-                    $this->container[2][$item['player']] = [];
+                if (!isset($this->container['notifications'][$item['player']])) {
+                    $this->container['notifications'][$item['player']] = [];
                 }
                 $notifClass = new Notification();
                 $notifClass->setId((int)$item['id']);
@@ -147,7 +146,7 @@ class NotificationThread extends Thread
                 $notifClass->setVarKeys(explode(',', $item['varKeys']));
                 $notifClass->setDisplayed((bool)$item['displayed']);
 
-                $this->container[2][$item['player']][] = $notifClass;
+                $this->container['notifications'][$item['player']][] = $notifClass;
             }
         }
     }
