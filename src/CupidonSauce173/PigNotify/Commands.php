@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace CupidonSauce173\PigNotify;
 
-
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
+use pocketmine\player\Player;
 
-class Commands extends Command implements PluginIdentifiableCommand
+class Commands extends Command
 {
 
     function __construct()
@@ -42,13 +39,5 @@ class Commands extends Command implements PluginIdentifiableCommand
         $ui = new UI();
         /** @var Player $sender */
         $ui->MainForm($sender);
-    }
-
-    /**
-     * @return Plugin
-     */
-    function getPlugin(): Plugin
-    {
-        return PigNotify::getInstance();
     }
 }

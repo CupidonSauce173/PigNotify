@@ -11,9 +11,11 @@ use function mysqli_connect;
 class DatabaseProvider
 {
 
+    /**
+     * @param array $sqlInfo
+     */
     function __construct(array $sqlInfo)
     {
-
         $this->CreateDatabaseStructure($sqlInfo);
     }
 
@@ -21,8 +23,8 @@ class DatabaseProvider
     function CreateDatabaseStructure(array $sqlInfo): void
     {
         $link = mysqli_connect(
-            $sqlInfo['ip'],
-            $sqlInfo['user'],
+            $sqlInfo['host'],
+            $sqlInfo['username'],
             $sqlInfo['password'],
             null,
             $sqlInfo['port']
@@ -39,7 +41,7 @@ class DatabaseProvider
         $link->query("CREATE TABLE IF NOT EXISTS notifications(
         id MEDIUMINT NOT NULL AUTO_INCREMENT,
         displayed TINYINT(1) NOT NULL DEFAULT FALSE,
-        player VARCHAR(15) NOT NULL,
+        player VARCHAR(255) NOT NULL,
         langKey VARCHAR(255) NOT NULL,
         VarKeys VARCHAR(255) NOT NULl,
         event VARCHAR(255) NOT NULL,

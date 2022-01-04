@@ -5,9 +5,12 @@
 <p align="center">Join my discord: https://discord.gg/2QAPHbqrny </p>
 <p align="center">This is a notification system designed for the now deleted Pigraid Network. </p>
 
-### Known Issues
+#### Important Note
 
-- none
+- For the users using the version 3.2.0, know that we switched from player username to player uuid.
+This means that you might have to reset your database. Using uuid is much more secure than
+player username. Thank you for your understanding.
+
 
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
@@ -16,11 +19,12 @@
 | Simple API                  | ✔️ |
 | Translation System          | ✔️ |
 | Command Customization       | ✔️ |
-| Automated MySQL Constructor | ✔️ |
+| Automated MySQL Constructor | ✔️ |
 
 ### Prerequisites
 
 - Working MySQL Server.
+- PocketMine-MP 4.+
 
 ### Introduction
 
@@ -53,7 +57,7 @@ $notification->getId(); # Returns Int.
 
 # Get / Set Player.
 $notification->setPlayer($player);
-$notification->getPlayer(); # Returns pmmp/Player
+$notification->getPlayer(); # Returns string/Uuid
 
 # Get / Set Displayed.
 $notification->setDisplayed(true|false);
@@ -133,10 +137,10 @@ Then, you can use the API like you wish.
 # List of methods in the API.
 
 # Will create a new notification.
-$api->createNotification($player, $langKey, $event, $varKeys);
-$api->createNotification($player, $langKey, $event);
+$api->createNotification($uuid, $langKey, $event, $varKeys);
+$api->createNotification($uuid, $langKey, $event);
 # Will return a list of notification objects.
-$api->getPlayerNotifications($player);
+$api->getPlayerNotifications($xuid);
 # Will delete one notification, must pass a notification object.
 $api->deleteNotification($notification);
 # Will delete a list of notifications, must pass an array of notification objects.
@@ -148,6 +152,7 @@ $api->getText($messageIndex); #If the messageIndex doesn't require any changes (
 $api->translateNotification($notification);
 $api->translateNotification($notification, false); #If you don't want the prefix.
 
+# Examples of how to use the API.
 
 public function onDeath(PlayerDeathEvent $event){
    $player = $event->getPlayer();
@@ -155,6 +160,17 @@ public function onDeath(PlayerDeathEvent $event){
    $player->sendMessage("Don't forget, you have $notifCount notifications!");
 }
 
+public function onFriendRequestCreate(CustomEvent $event){
+   $sender = $event->getPlayer()->getName(); #Sender
+   $receiver = $event->getReceiver()->getName(); #Target
+   $receiverUuid = $event->getReceiver()->getUniqueId()->toString(); #Target Uuid
+   
+   $this->api->createNotification(
+     $receiverUuid, #Target Uuid
+     'friend.request.send', #Index from the langKeys.ini
+     'friendRequestCreation',  #Notification event.
+     ["target|$receiver", "sender|$player"]); #Variables from the index (friend.request.send).
+}
 ```
 
 ### How it works?
@@ -168,7 +184,7 @@ message (Translation System) and send a message to the target player and finally
 When the player disconnects from the server, all the notifications that are related to that player will be destroyed
 with the deleteNotification($notification) method.
 
-<h3>How to create a notification</h3>
+### How to create a notification
 
 To create a new notification, you will need to call the $api->createNotification(); method. It won't directly show to
 the player that they received a notification, it will just create a new one in the database and will be waiting to get
@@ -180,7 +196,58 @@ Basically:
 server -> API (createNotification) -> Database <- Checknotifications Task -> server -> notificationCheckTask -> API (translateNotification) -> player.
 ```
 
-<h3>Notes</h3>
+#### langKeys
+
+In order to create notifications, you need to add keys to the langKeys.ini file. There is already an example in the 
+file but here's another one.
+
+You want to create notifications for your plugins, this is how you would do it : 
+
+```ini
+
+; start plugin section (place your indexes here)
+
+; shop plugin
+shop.item.bought = %buyer% bought your item!
+shop.sale.ended = Your sale for the item : %item% has ended!
+shop.banned = You have been banned from the market during %time% for %reason%!
+shop.unbanned = You have been unbanned from the market!
+shop.new.bid = %player% placed a bid on your item!
+shop.auction.ended = Your auction for the "%item%" item ended!
+
+; party plugin
+party.invitation.received = You received an invitation to join %owner%'s party!
+party.disband = Your party has been removed!
+
+; friends plugin
+friend.request.received = You received a friend request from %sender%.
+friend.request.declined = %receiver% declined your friend request.
+friend.request.accepted = %receiver% accepted your friend request!
+friend.gift.received = You received a gift! %gift% from %friend%!
+friend.purchase.made = You bought a %object%, you can send it to a friend!
+
+; end plugin section
+
+; plugin text (do not delete any index) 
+
+; utils text
+form.close.button = §lClose
+message.no.notif = You have no notification!
+message.no.perm = You do not have the necessary permissions!
+message.command.description = Command to see all your notifications.
+form.warn.notif = §rThis notification will be removed when you leave this page.
+; title text
+form.title = Notifications
+; main form text
+form.content.main = Notification system. You can see or delete all your notifications here.
+form.notification.button = §lNotifications
+form.notifications.button = §lNotifications [%count%]
+form.clearAll.button = §lClear all
+; notification list ui
+form.content.list = Your notification list. Click on one for more information.
+```
+
+### Notes
 
 - You don't need to handle the PlayerQuitEvent to destruct the notifications.
 - You don't need to handle the join event to look if there are notifications for the player.

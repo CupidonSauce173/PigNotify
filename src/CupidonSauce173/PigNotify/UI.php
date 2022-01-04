@@ -7,7 +7,8 @@ namespace CupidonSauce173\PigNotify;
 
 use CupidonSauce173\PigNotify\lib\FormAPI;
 use CupidonSauce173\PigNotify\Object\Notification;
-use pocketmine\Player;
+use JetBrains\PhpStorm\Pure;
+use pocketmine\player\Player;
 use function count;
 use function sort;
 use function str_replace;
@@ -16,7 +17,7 @@ class UI
 {
     private FormAPI $api;
 
-    function __construct()
+    #[Pure] function __construct()
     {
         $this->api = new FormAPI();
     }
@@ -26,7 +27,7 @@ class UI
      */
     function MainForm(Player $player): void
     {
-        $notifications = PigNotify::getInstance()->getPlayerNotifications($player->getName());
+        $notifications = PigNotify::getInstance()->getPlayerNotifications($player->getUniqueId()->toString());
         sort($notifications);
         $count = count($notifications);
 

@@ -13,7 +13,6 @@ use CupidonSauce173\PigNotify\Utils\DatabaseProvider;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use Thread;
@@ -52,7 +51,7 @@ class PigNotify extends PluginBase implements Listener
             $this->saveResource('langKeys.ini');
         }
 
-        self::iniThreadField();
+        $this->iniThreadField();
 
         $this->langKeys = array_map('\stripcslashes', parse_ini_file($this->getDataFolder() . 'langKeys.ini', false, INI_SCANNER_RAW));
         $this->api = new API();
@@ -83,7 +82,10 @@ class PigNotify extends PluginBase implements Listener
         $this->container['runThread'] = true;
 
         # Prepare & start thread.
-        $this->thread = new NotificationThread($this->dbInfo, $this->container);
+        $this->thread = new NotificationThread(
+            (array)$this->container['config']['MySQL'],
+            $this->container
+        );
         $this->thread->start();
     }
 
@@ -101,26 +103,26 @@ class PigNotify extends PluginBase implements Listener
     # API Field
 
     /**
-     * Create a new notification for a player.
-     * @param Player $player
+     * Create a new notification for a player by uuid.
+     * @param string $uuid
      * @param string $langKey
      * @param string $event
      * @param array|null $varKeys
      */
-    function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
+    function createNotification(string $uuid, string $langKey, string $event, array $varKeys = null): void
     {
-        $this->api->createNotification($player, $langKey, $event, $varKeys);
+        $this->api->createNotification($uuid, $langKey, $event, $varKeys);
     }
 
     /**
-     * Get all notifications of a player by username.
-     * @param string $player
+     * Get all notifications of a player by uuid.
+     * @param string $uuid
      * @return array
      */
-    function getPlayerNotifications(string $player): array
+    function getPlayerNotifications(string $uuid): array
     {
-        if (!isset($this->container['notifications'][$player])) return [];
-        return (array)$this->container['notifications'][$player];
+        if (!isset($this->container['notifications'][$uuid])) return [];
+        return (array)$this->container['notifications'][$uuid];
     }
 
     /**
@@ -170,7 +172,15 @@ class PigNotify extends PluginBase implements Listener
      */
     function onJoin(PlayerJoinEvent $event): void
     {
-        $this->container['players'][] = $event->getPlayer()->getName();
+        $this->container['players'][] = $event->getPlayer()->getUniqueId()->toString();
+
+        $this->createNotification(
+            $event->getPlayer()->getUniqueId()->toString(),
+            'friend.request.received',
+            'RequestReceived',
+            ['sender|TestFriend']
+        );
+
     }
 
     /**
@@ -178,9 +188,9 @@ class PigNotify extends PluginBase implements Listener
      */
     function onLeave(PlayerQuitEvent $event): void
     {
-        $name = $event->getPlayer()->getName();
-        unset($this->container['players'][$name]);
-        if (!isset($this->container['notifications'][$name])) return;
-        unset($this->container['notifications'][$name]);
+        $uuid = $event->getPlayer()->getUniqueId()->toString();
+        unset($this->container['players'][$uuid]);
+        if (!isset($this->container['notifications'][$uuid])) return;
+        unset($this->container['notifications'][$uuid]);
     }
 }

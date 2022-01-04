@@ -8,7 +8,6 @@ namespace CupidonSauce173\PigNotify\Utils;
 use CupidonSauce173\PigNotify\Object\Notification;
 use CupidonSauce173\PigNotify\PigNotify;
 use CupidonSauce173\PigNotify\task\SQLThread;
-use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use function array_fill;
 use function array_search;
@@ -17,27 +16,28 @@ use function explode;
 use function implode;
 use function str_repeat;
 use function str_replace;
-use function strpos;
+use function str_contains;
 
 class API
 {
     /**
-     * @param Player $player
+     * @param string $uuid
      * @param string $langKey
      * @param string $event
      * @param array|null $varKeys
      */
-    function createNotification(Player $player, string $langKey, string $event, array $varKeys = null): void
+    function createNotification(string $uuid, string $langKey, string $event, array $varKeys = null): void
     {
         # Note, varKeys build = array ( 0 => "sender|server", 1 => "sender|friend1" )
         if ($varKeys !== null) {
             $keys = implode(',', $varKeys);
-            $data = ['data' => [$player->getName(), $langKey, $keys, $event], 'types' => 'ssss'];
+            $data = ['data' => [$uuid, $langKey, $keys, $event], 'types' => 'ssss'];
             $query = "INSERT INTO notifications (player,langkey,VarKeys,event) VALUES (?,?,?,?)";
         } else {
-            $data = ['data' => [$player->getName(), $langKey, $event], 'types' => 'sss'];
+            $data = ['data' => [$uuid, $langKey, $event], 'types' => 'sss'];
             $query = "INSERT INTO notifications (player,langKey,event) VALUES (?,?,?)";
         }
+
         $thread = new SQLThread($query, PigNotify::getInstance()->dbInfo, $data);
         $thread->start();
     }
@@ -97,7 +97,7 @@ class API
             return 'Error while translating';
         }
         foreach ($keys as $key => $value) {
-            if (strpos($message, '%' . $key . '%') !== false) {
+            if (str_contains($message, '%' . $key . '%')) {
                 $message = str_replace('%' . $key . '%', $value, $message);
             } else {
                 $message = 'Unknown Index: ' . $key . ' with ' . $value . ' as value.';

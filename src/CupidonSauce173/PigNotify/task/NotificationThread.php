@@ -87,7 +87,7 @@ class NotificationThread extends Thread
                 if (!isset($this->container['notifications'][$player])) return;
                 foreach ($this->container['notifications'][$player] as $notification) {
                     if ($notification instanceof Notification) {
-                        if (array_search($notification->getId(), $this->idList) === false) {
+                        if (array_search($notification->getId(), (array)$this->idList) === false) {
                             $this->idList[] = $notification->getId();
                         }
                     }
@@ -100,7 +100,7 @@ class NotificationThread extends Thread
 
             if (empty($this->idList)) return;
             # Gets a list of already existing notification to create a smaller and more optimized query.
-            $data = array_merge((array)$this->container['players'], $this->idList);
+            $data = array_merge((array)$this->container['players'], (array)$this->idList);
             $stmt = $db->prepare("SELECT id,displayed,player,langKey,VarKeys,event FROM notifications WHERE player IN ($clause) AND id NOT IN ($idClause)");
             $stmt->bind_param($types . $this->idTypes, ...$data);
         }
@@ -127,7 +127,7 @@ class NotificationThread extends Thread
             $idClause = $this->idClause;
             if (strlen($this->idTypes) === count($this->idList)) {
                 $update = $db->prepare("UPDATE notifications SET displayed = TRUE WHERE id IN ($idClause)");
-                $update->bind_param($this->idTypes, ...$this->idList);
+                $update->bind_param($this->idTypes, ...(array)$this->idList);
                 $update->execute();
             }
         }
