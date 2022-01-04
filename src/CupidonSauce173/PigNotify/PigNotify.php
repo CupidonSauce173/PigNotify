@@ -173,14 +173,6 @@ class PigNotify extends PluginBase implements Listener
     function onJoin(PlayerJoinEvent $event): void
     {
         $this->container['players'][] = $event->getPlayer()->getUniqueId()->toString();
-
-        $this->createNotification(
-            $event->getPlayer()->getUniqueId()->toString(),
-            'friend.request.received',
-            'RequestReceived',
-            ['sender|TestFriend']
-        );
-
     }
 
     /**
