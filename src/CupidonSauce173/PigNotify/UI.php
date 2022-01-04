@@ -7,7 +7,6 @@ namespace CupidonSauce173\PigNotify;
 
 use CupidonSauce173\PigNotify\lib\FormAPI;
 use CupidonSauce173\PigNotify\Object\Notification;
-use JetBrains\PhpStorm\Pure;
 use pocketmine\player\Player;
 use function count;
 use function sort;
@@ -16,8 +15,8 @@ use function str_replace;
 class UI
 {
     private FormAPI $api;
-
-    #[Pure] function __construct()
+    
+    function __construct()
     {
         $this->api = new FormAPI();
     }
