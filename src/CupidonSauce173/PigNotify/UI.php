@@ -15,7 +15,7 @@ use function str_replace;
 class UI
 {
     private FormAPI $api;
-    
+
     function __construct()
     {
         $this->api = new FormAPI();

@@ -7,10 +7,9 @@
 
 #### Important Note
 
-- For the users using the version 3.2.0, know that we switched from player username to player uuid.
-This means that you might have to reset your database. Using uuid is much more secure than
-player username. Thank you for your understanding.
-
+- For the users using the version 3.2.0, know that we switched from player username to player uuid. This means that you
+  might have to reset your database. Using uuid is much more secure than player username. Thank you for your
+  understanding.
 
 | **Feature**                 | **State** | 
 | --------------------------- |:----------:|
@@ -198,10 +197,10 @@ server -> API (createNotification) -> Database <- Checknotifications Task -> ser
 
 #### langKeys
 
-In order to create notifications, you need to add keys to the langKeys.ini file. There is already an example in the 
-file but here's another one.
+In order to create notifications, you need to add keys to the langKeys.ini file. There is already an example in the file
+but here's another one.
 
-You want to create notifications for your plugins, this is how you would do it : 
+You want to create notifications for your plugins, this is how you would do it :
 
 ```ini
 

@@ -7,8 +7,10 @@ namespace CupidonSauce173\PigNotify;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
 
-class Commands extends Command
+class Commands extends Command implements PluginOwned
 {
 
     function __construct()
@@ -39,5 +41,13 @@ class Commands extends Command
         $ui = new UI();
         /** @var Player $sender */
         $ui->MainForm($sender);
+    }
+
+    /**
+     * @return Plugin
+     */
+    public function getOwningPlugin(): Plugin
+    {
+        return $this->getOwningPlugin();
     }
 }

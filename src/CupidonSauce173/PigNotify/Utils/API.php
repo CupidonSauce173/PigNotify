@@ -14,9 +14,9 @@ use function array_search;
 use function count;
 use function explode;
 use function implode;
+use function str_contains;
 use function str_repeat;
 use function str_replace;
-use function str_contains;
 
 class API
 {

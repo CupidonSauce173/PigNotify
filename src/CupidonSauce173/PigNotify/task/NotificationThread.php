@@ -13,6 +13,7 @@ use Volatile;
 use function array_fill;
 use function array_merge;
 use function count;
+use function explode;
 use function implode;
 use function str_repeat;
 use function strlen;
